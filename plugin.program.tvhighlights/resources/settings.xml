@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="32001">
+        <setting id="suburl" type="labelenum" label="Kategorie" default="spielfilm" values="spielfilm|sport|serie|unterhaltung|doku-und-info|kinder" />
+    </category>
+</settings>
