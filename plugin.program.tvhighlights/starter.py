@@ -6,7 +6,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.2
+#       VERSION:  0.0.3
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -26,15 +26,24 @@
 ###########################################################################
 #     CHANGELOG:  (02.09.2015) TDOe - First Publishing
 ###########################################################################
-
 import os,sys,time,xbmc,xbmcgui,xbmcaddon
 
 icon = xbmc.translatePath("special://home/addons/plugin.program.tvhighlights/icon.png")
 mdelay = 14400 # 4h
 
 xbmc.executebuiltin('XBMC.Notification(TV Highlights, Dienst gestartet ,4000,'+icon+')')
+xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights)')
 
-while True:
-    xbmc.executebuiltin('XBMC.RunAddon(plugin.program.tvhighlights)')
-    time.sleep(mdelay)
+
+
+if __name__ == '__main__':
+    monitor = xbmc.Monitor()
+
+    while not monitor.abortRequested():
+        # Sleep/wait for abort for $mdelay seconds
+        if monitor.waitForAbort(mdelay):
+            # Abort was requested while waiting. We should exit
+            break
+        xbmc.log("Updating TV-Highlights of the Day! %s" % time.time(), level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights)')
 

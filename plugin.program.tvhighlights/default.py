@@ -6,7 +6,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.2
+#       VERSION:  0.0.3
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -42,8 +42,28 @@ addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID
 addonDir = addon.getAddonInfo("path")
 XBMC_SKIN  = xbmc.getSkinDir()
 
-NODEBUG = False
+NODEBUG = True
 
+SKYAvail = False
+SKYChannel = [ 'Sky Action', 'Sky Cinema', 'Sky Cinema +1', 'Sky Cinema +24', 'Sky Hits',
+               'Sky Atlantic HD', 'Sky Comedy', 'Sky Nostalgie', 'Sky Emotion', 'Sky Krimi',
+               'Sky 3D', 'MGM', 'Disney Cinemagic', 'Sky Bundesliga', 'Sky Sport HD 1',
+               'Sky Sport HD 2', 'Sky Sport Austria', 'Sky Sport News HD', 'SPORT1+', 'Sport1 US',
+               'sportdigital', 'Motorvision TV', 'Discovery Channel', 'National Geographic Channel',
+               'Nat Geo Wild', 'Planet', 'History HD', 'A und E', 'Spiegel Geschichte',
+               'Spiegel TV Wissen', '13TH STREET', 'Syfy', 'FOX', 'Universal Channel', 'TNT Serie',
+               'TNT Film', 'Kinowelt TV', 'kabel eins classics', 'Silverline', 'AXN', 'RTL Crime',
+               'Sat.1 Emotions', 'Romance TV', 'Passion', 'ProSieben Fun', 'TNT Glitz', 'RTL Living',
+               'E! Entertainment', 'Heimatkanal', 'GoldStar TV', 'Beate-Uhse.TV', 'Junior',
+               'Disney Junior', 'Disney XD', 'Cartoon Network', 'Boomerang', 'Animax', 'Classica',
+               'MTV Live HD', 'MTV HD'
+             ]
+
+
+
+
+
+showsky=addon.getSetting('showsky')
 suburl=addon.getSetting('suburl')
 if type(suburl) is str:
     url="http://www.tvdigital.de/tv-tipps/heute/"+suburl+"/"
@@ -95,17 +115,23 @@ clearprops()
 content = getUnicodePage(url)
 content = content.replace("\\","")
 spl = content.split('class="highlight-container"')
-if len(spl) >= 10:
-    max = 10
-else:
-    max = len(spl)
+max = 10
+thumbNr = 1
+for i in range(1, len(spl), 1):
+    if thumbNr > max:
+        break
 
-debug(len(spl))
-
-for i in range(1, max, 1):
     entry = spl[i]
 
     channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(entry)[0]
+    if showsky != "true":
+        debug("Sky not selected, throw away paytv channel")
+        if channel in SKYChannel:
+            debug("Throw away channel %s. Its PayTV" %(channel))
+            continue
+    else:
+        debug("Sky is selected. No filtering")
+
     thumbs = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
     thumbUrl=thumbs[0]
     logoUrl=thumbs[1]
@@ -125,16 +151,17 @@ for i in range(1, max, 1):
 
     extrainfos2 = extrainfos.split('|')
     genre = extrainfos2[0]
-    WINDOW.setProperty( "TVHighlightsToday.%s.Title" %(i), title )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Thumb" %(i), thumbUrl )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Time" %(i), time )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Date" %(i), date )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Channel" %(i), channel )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Icon" %(i), thumbUrl )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Logo" %(i), logoUrl )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Genre" %(i), genre )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Comment" %(i), comment )
-    WINDOW.setProperty( "TVHighlightsToday.%s.Extrainfos" %(i), extrainfos )
+
+    WINDOW.setProperty( "TVHighlightsToday.%s.Title" %(thumbNr), title )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Thumb" %(thumbNr), thumbUrl )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Time" %(thumbNr), time )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Date" %(thumbNr), date )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Channel" %(thumbNr), channel )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Icon" %(thumbNr), thumbUrl )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Logo" %(thumbNr), logoUrl )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Genre" %(thumbNr), genre )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Comment" %(thumbNr), comment )
+    WINDOW.setProperty( "TVHighlightsToday.%s.Extrainfos" %(thumbNr), extrainfos )
     debug("===========TIP START=============")
     debug("Title "+title)
     debug("Thumb "+thumbUrl)
@@ -147,6 +174,6 @@ for i in range(1, max, 1):
     debug("Comment "+comment)
     debug("Extrainfos "+extrainfos)
     debug("===========TIP END=============")
-
+    thumbNr = thumbNr + 1
 
 

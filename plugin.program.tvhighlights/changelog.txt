@@ -1,2 +1,6 @@
+v0.0.3
+- lots of bugfixes
+- PayTV Filter
+
 v0.0.2
 - initial release
