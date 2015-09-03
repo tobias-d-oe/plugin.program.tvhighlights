@@ -1,3 +1,6 @@
+v0.0.4
+- added settingsoption for SKY-TV
+
 v0.0.3
 - lots of bugfixes
 - PayTV Filter

@@ -2,5 +2,7 @@
 <settings>
     <category label="32001">
         <setting id="suburl" type="labelenum" label="Kategorie" default="spielfilm" values="spielfilm|sport|serie|unterhaltung|doku-und-info|kinder" />
+        <setting id="showsky" type="bool" label="Zeige SKY Sender" default="false"/>
     </category>
 </settings>
+
