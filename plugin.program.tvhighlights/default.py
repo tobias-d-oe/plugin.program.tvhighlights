@@ -148,7 +148,8 @@ def get_tvdigital_mastermode_highlights(mastertype):
                 continue
         else:
             debug("Sky is selected. No filtering")
-            thumbs = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+
+        thumbs = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumbUrl=thumbs[0]
         logoUrl=thumbs[1]
         if len(re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry))>0:
