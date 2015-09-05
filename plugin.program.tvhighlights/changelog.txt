@@ -1,3 +1,10 @@
+v0.0.5
+- complete redesign
+- added modeselect
+  - mastermode
+  - splitmode
+- added pluginoptions controllability
+
 v0.0.4
 - added settingsoption for SKY-TV
 

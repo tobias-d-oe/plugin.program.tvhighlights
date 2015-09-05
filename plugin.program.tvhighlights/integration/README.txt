@@ -5,7 +5,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.1
+#       VERSION:  0.0.5
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -44,8 +44,34 @@ Zur Auswahl tehen hier:
 Das Plugin wird bei jedem Kodi Start ausgefüht und aktualisiert die Daten. Daraufhin geht es in eine Loop 
 und aktualisiert sich alle 4h.
 
+Modi:
+==============
 
+Es gibt zwei Modi in denen das Plugin betrieben werden kann:
+- Mastermode
+- Splitmode
 
+Mastermode:
+--------------
+Im Mastermode kann nur eine Kategorie ausgewählt werden. Nach Abruf kann auf die Ergebnisse über folgende INFO Variablen zugegriffen werden:
+-TVHighlightsToday.<nr>.<bezeichnung>
+
+Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos
+
+Splitmode:
+--------------
+Hierbei können die Kategorien ausgewählt werden welche aktualisiert werden sollen. Das Ergebniss findet sich dann in folgenden Variablen wieder:
+-TV<watchtype>HighlightsToday.<nr>.<bezeichnung>
+
+Als watchtype kann folgendes verwendet werden: 
+- spielfilm
+- serie
+- unterhaltung
+- sport
+- kinder
+- doku-und-info
+
+Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos
 
 
 Skintegration:
@@ -102,6 +128,28 @@ Beispiel:
 
   cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
 
+
+
+Pluginaufruf:
+==============
+
+Durch die Methode "settings" wird je nach gesetztem Benutzersetting entschieden was aktualisiert werden soll in welchem Modus.
+
+    XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")
+
+
+Ruft das Plugin im Mastermode auf mit "spielfilm" als watchtype
+
+    XBMC.RunScript(plugin.program.tvhighlights,"?methode=mastermode&watchtype=spielfilm")
+
+
+Ruft das Plugin im Splitmode auf mit "sport" als aktualisierungsziel.
+
+    XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_single_tvdigital&watchtype=sport")
+
+Ruft das Plugin im Splitmode auf und aktualisiert alle watchtypen
+
+    XBMC.RunScript(plugin.program.tvhighlights,"?methode=getall_tvdigital")
 
 
 -- That's It , viel Spass damit, TDOe 2015 --

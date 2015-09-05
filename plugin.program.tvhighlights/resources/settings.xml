@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="32001">
-        <setting id="suburl" type="labelenum" label="Kategorie" default="spielfilm" values="spielfilm|sport|serie|unterhaltung|doku-und-info|kinder" />
-        <setting id="showsky" type="bool" label="Zeige SKY Sender" default="false"/>
+    <category label="Allgemein">
+        <setting id="mastermode" type="bool" label="Mastermode" default="true"/>
+        <setting id="showsky" type="bool" label="Zeige SKY Sender" default="true"/>
+    </category>
+    <category label="Splitmode">
+        <setting id="setting_spielfilm" type="bool" label="Spielfilme" default="true"/>
+        <setting id="setting_sport" type="bool" label="Sport" default="false"/>
+        <setting id="setting_serie" type="bool" label="Serie" default="false"/>
+        <setting id="setting_unterhaltung" type="bool" label="Unterhaltung" default="false"/>
+        <setting id="setting_doku" type="bool" label="Doku und Info" default="false"/>
+        <setting id="setting_kinder" type="bool" label="Kinder" default="false"/>
+    </category>
+    <category label="Mastermode">
+        <setting id="mastertype" type="labelenum" label="Kategorie" default="spielfilm" values="spielfilm|sport|serie|unterhaltung|doku-und-info|kinder" />
     </category>
 </settings>
 

@@ -6,7 +6,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.4
+#       VERSION:  0.0.5
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -26,24 +26,26 @@
 ###########################################################################
 #     CHANGELOG:  (02.09.2015) TDOe - First Publishing
 ###########################################################################
+
 import os,sys,time,xbmc,xbmcgui,xbmcaddon
 
 icon = xbmc.translatePath("special://home/addons/plugin.program.tvhighlights/icon.png")
 mdelay = 14400 # 4h
+#mdelay = 120 # 2m
 
 xbmc.executebuiltin('XBMC.Notification(TV Highlights, Dienst gestartet ,4000,'+icon+')')
-xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights)')
-
+xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
 
 
 if __name__ == '__main__':
     monitor = xbmc.Monitor()
-
+ 
     while not monitor.abortRequested():
         # Sleep/wait for abort for $mdelay seconds
         if monitor.waitForAbort(mdelay):
             # Abort was requested while waiting. We should exit
             break
-        xbmc.log("Updating TV-Highlights of the Day! %s" % time.time(), level=xbmc.LOGDEBUG)
-        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights)')
+        xbmc.log("Refreshing TVHighlights! %s" % time.time(), level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
+
 
