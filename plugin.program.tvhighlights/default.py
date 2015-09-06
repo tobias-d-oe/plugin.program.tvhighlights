@@ -287,6 +287,92 @@ def get_tvdigital_watchtype_highlights(watchtype):
  
 
 
+
+##########################################################################################################################
+## Get movie details
+##########################################################################################################################
+def get_movie_details(url):
+    #### Start capture ####
+    content = getUnicodePage(url)
+    content = content.replace("\\","")
+    spl = content.split('id="broadcast-content-box"')
+
+    ### movie picture
+    picture = re.compile('<img id="galpic" itemprop="image" src="(.+?)"', re.DOTALL).findall(content)
+    ### movie title
+    titel = re.compile('<li id="broadcast-title" itemprop="name">(.+?)</li>', re.DOTALL).findall(content)
+    ### movie subtitle
+    subtitel = re.compile('<li id="broadcast-subtitle"><h2>(.+?)</h2>', re.DOTALL).findall(content)
+
+    ### movie broadcast details
+    playson = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li class="broadcast-info-icons', re.DOTALL).findall(content)
+    playson = re.compile('<li>(.+?)</li>', re.DOTALL).findall(playson[0])
+
+    ### rating values
+    ratingValue = re.compile('<span itemprop="ratingValue">(.+?)</span>', re.DOTALL).findall(content)
+    reviewCount = re.compile('<span itemprop="reviewCount">(.+?)</span>', re.DOTALL).findall(content)
+    bestRating = re.compile('<span itemprop="bestRating">(.+?)</span>', re.DOTALL).findall(content)
+
+    ### movie description
+    description = re.compile('<span itemprop="description">(.+?)</span>', re.DOTALL).findall(content)
+
+    ### actors
+    actors = re.compile('class="person-list-actor">(.+?)class="person-list-crew', re.DOTALL).findall(content)
+    actors = actors[0].split('<tr class=')
+    actors.pop(0)
+    actorsdata = []
+    for i in actors:
+        rolle = re.compile('<td>(.+?)</td>', re.DOTALL).findall(i)[0]
+        if len(rolle) > 50:
+            rolle = ""
+        actor = re.compile('<span itemprop="name">(.+?)</span>', re.DOTALL).findall(i)[0]
+        actordict={'rolle':rolle, 'actor':actor}
+        actorsdata.append(actordict)
+
+    ### crew
+    crew = re.compile('<div class="person-list-crew">(.+?)</table>', re.DOTALL).findall(content)
+    crew = crew[0].split('<tr class=')
+    crew.pop(0)
+    crewdata = []
+    for i in crew:
+        doing = re.compile('<td>(.+?)</td>', re.DOTALL).findall(i)[0]
+        if len(doing) > 50:
+            doing = ""
+        person = re.compile('<span itemprop="name">(.+?)</span>', re.DOTALL).findall(i)[0]
+        crewdict={'doing':doing, 'person':person}
+        crewdata.append(crewdict)
+
+    ### genre
+    genre = re.compile('<ul class="genre"(.+?)class="desc-block">', re.DOTALL).findall(content)
+    genre = re.compile('<span itemprop="genre">(.+?)</span>', re.DOTALL).findall(genre[0])
+
+
+    ### rating details
+    rating = re.compile('<ul class="rating-box"(.+?)</ul>', re.DOTALL).findall(content)
+    rating = rating[0].split('<li>')
+    rating.pop(0)
+    ratingdata = []
+    for i in rating:
+       ratingtype = i.split('<span')[0]
+       ratingclass = re.compile('class="rating-(.+?)">', re.DOTALL).findall(i)
+       ratingdict = {'ratingtype':ratingtype, 'rating': ratingclass}
+       ratingdata.append(ratingdict)
+
+    ### broadcastinfo
+    broadcastinfo = re.compile('class="broadcast-info-icons tvd-tooltip">(.+?)</ul>', re.DOTALL).findall(content)
+    broadcastinfo = re.compile('class="(.+?)"', re.DOTALL).findall(broadcastinfo[0])
+    resultdict = {'titel':titel,'subtitel':subtitel,'picture':picture,'ratingValue':ratingValue,
+                  'reviewCount':reviewCount,'bestRating':bestRating,'description':description,
+                  'ratingdata':ratingdata,'genre':genre,'broadcastdetails':playson,'actorsdata':actorsdata,
+                  'crewdata':crewdata,'broadcastinfo':broadcastinfo}
+    return resultdict
+
+
+
+
+
+
+
 ##########################################################################################################################
 ##########################################################################################################################
 ##
@@ -296,16 +382,6 @@ def get_tvdigital_watchtype_highlights(watchtype):
 ##########################################################################################################################
 
 
-
-#### OLD Should Work ####
-##if type(suburl) is str:
-##    url="http://www.tvdigital.de/tv-tipps/heute/"+suburl+"/"
-##else:
-##    url="http://www.tvdigital.de/tv-tipps/heute/spielfilm/"
-##
-##clearprops()
-##get_single_preview(url)
-#########################
 
 
 ##########################################################################################################################
