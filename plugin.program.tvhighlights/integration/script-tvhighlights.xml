@@ -19,16 +19,16 @@
                                         <textcolor>white</textcolor>
                                         <shadowcolor>black</shadowcolor>
                                 </control>
-                                <control type="list" id="8001">
-                                        <animation effect="slide" start="0,0" end="120,0" time="0" condition="StringCompare(Container(8001).NumItems,3)">conditional</animation>
-                                        <animation effect="slide" start="0,0" end="240,0" time="0" condition="StringCompare(Container(8001).NumItems,2)">conditional</animation>
-                                        <animation effect="slide" start="0,0" end="360,0" time="0" condition="StringCompare(Container(8001).NumItems,1)">conditional</animation>
+                                <control type="list" id="58051">
+                                        <animation effect="slide" start="0,0" end="120,0" time="0" condition="StringCompare(Container(58051).NumItems,3)">conditional</animation>
+                                        <animation effect="slide" start="0,0" end="240,0" time="0" condition="StringCompare(Container(58051).NumItems,2)">conditional</animation>
+                                        <animation effect="slide" start="0,0" end="360,0" time="0" condition="StringCompare(Container(58051).NumItems,1)">conditional</animation>
                                         <left>0</left>
                                         <top>0</top>
                                         <width>960</width>
                                         <height>330</height>
-                                        <onleft>8001</onleft>
-                                        <onright>8001</onright>
+                                        <onleft>58051</onleft>
+                                        <onright>58051</onright>
                                         <onup>20</onup>
                                         <ondown condition="System.HasAddon(script.globalsearch)">608</ondown>
                                         <ondown condition="!System.HasAddon(script.globalsearch)">603</ondown>
@@ -188,7 +188,7 @@
                                                         <texture background="true">$INFO[ListItem.Icon]</texture>
                                                         <bordertexture border="5">folder-focus.png</bordertexture>
                                                         <bordersize>5</bordersize>
-                                                        <visible>Control.HasFocus(8001)</visible>
+                                                        <visible>Control.HasFocus(58051)</visible>
                                                 </control>
                                                 <control type="image">
                                                         <left>10</left>
@@ -199,7 +199,7 @@
                                                         <texture>$INFO[ListItem.Icon]</texture>
                                                         <bordertexture border="5">button-nofocus.png</bordertexture>
                                                         <bordersize>5</bordersize>
-                                                        <visible>!Control.HasFocus(8001)</visible>
+                                                        <visible>!Control.HasFocus(58051)</visible>
                                                 </control>
 
                                                 <control type="image">
@@ -249,7 +249,7 @@
                                                         <align>center</align>
                                                         <aligny>center</aligny>
                                                         <label>$INFO[ListItem.Label]</label>
-                                                        <visible>!Control.HasFocus(8001)</visible>
+                                                        <visible>!Control.HasFocus(58051)</visible>
                                                 </control>
                                                 <control type="label">
                                                         <left>20</left>
@@ -262,7 +262,7 @@
                                                         <align>center</align>
                                                         <aligny>center</aligny>
                                                         <label>$INFO[ListItem.Label]</label>
-                                                        <visible>Control.HasFocus(8001)</visible>
+                                                        <visible>Control.HasFocus(58051)</visible>
                                                 </control>
 
 
@@ -278,7 +278,7 @@
                                                         <align>left</align>
                                                         <aligny>top</aligny>
                                                         <label>$INFO[ListItem.Property(comment)]</label>
-                                                        <visible>!Control.HasFocus(8001)</visible>
+                                                        <visible>!Control.HasFocus(58051)</visible>
                                                 </control>
                                                 <control type="label" id="moviecommentblue">
                                                         <left>20</left>
@@ -292,7 +292,7 @@
                                                         <align>left</align>
                                                         <aligny>top</aligny>
                                                         <label>$INFO[ListItem.Property(comment)]</label>
-                                                        <visible>Control.HasFocus(8001)</visible>
+                                                        <visible>Control.HasFocus(58051)</visible>
                                                 </control>
 
 
@@ -358,7 +358,8 @@
                                                         <property name="country">$INFO[Window.Property(TVHighlightsToday.1.Country)]</property>
                                                         <property name="year">$INFO[Window.Property(TVHighlightsToday.1.Year)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.1.Title)]</label>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")</onclick>
+<!--                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick> -->
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</icon>
 
@@ -378,7 +379,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.2.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.2.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.2.Popup)]")</onclick>
                                                         <thumb2>$INFO[Window.Property(TVHighlightsToday.2.Logo)]</thumb2>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.2.Logo)]</icon>
                                                         <thumb>$INFO[Window.Property(TVHighlightsToday.2.Thumb)]</thumb>
@@ -394,7 +395,7 @@
                                                         <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.3.Extrainfos)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.3.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.3.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.3.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</actualicon>
@@ -411,7 +412,7 @@
                                                         <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.4.Extrainfos)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.4.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.4.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.4.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</actualicon>
@@ -428,7 +429,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.5.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.5.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.5.Popup)]")</onclick>
 
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.5.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.5.Logo)]</icon>
@@ -446,7 +447,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.6.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.6.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.6.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</actualicon>
@@ -463,7 +464,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.7.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.7.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.7.Popup)]")</onclick>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</actualicon>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</icon>
@@ -480,7 +481,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.8.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.8.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.8.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</actualicon>
@@ -498,7 +499,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.9.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.9.Time)]</label2>
-                                                        <onclick>-</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.9.Popup)]")</onclick>
 
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.9.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.9.Logo)]</icon>
@@ -516,8 +517,8 @@
                                         <height>40</height>
                                         <texturefocus>arrow-big-left.png</texturefocus>
                                         <texturenofocus>arrow-big-left.png</texturenofocus>
-                                        <onclick>Control.Move(8001,-1)</onclick>
-                                        <visible>Control.HasFocus(8001) + Container(8001).HasPrevious</visible>
+                                        <onclick>Control.Move(58051,-1)</onclick>
+                                        <visible>Control.HasFocus(58051) + Container(58051).HasPrevious</visible>
                                         <include>VisibleFadeEffect</include>
                                 </control>
                                 <control type="button">
@@ -528,8 +529,8 @@
                                         <height>40</height>
                                         <texturefocus>arrow-big-right.png</texturefocus>
                                         <texturenofocus>arrow-big-right.png</texturenofocus>
-                                        <onclick>Control.Move(8001,1)</onclick>
-                                        <visible>Control.HasFocus(8001) + Container(8001).HasNext</visible>
+                                        <onclick>Control.Move(58051,1)</onclick>
+                                        <visible>Control.HasFocus(58051) + Container(58051).HasNext</visible>
                                         <include>VisibleFadeEffect</include>
                                 </control>
                         </control>

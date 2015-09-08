@@ -5,7 +5,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.5
+#       VERSION:  0.0.7
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -56,7 +56,7 @@ Mastermode:
 Im Mastermode kann nur eine Kategorie ausgewählt werden. Nach Abruf kann auf die Ergebnisse über folgende INFO Variablen zugegriffen werden:
 -TVHighlightsToday.<nr>.<bezeichnung>
 
-Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos
+Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos,Popup
 
 Splitmode:
 --------------
@@ -71,7 +71,7 @@ Als watchtype kann folgendes verwendet werden:
 - kinder
 - doku-und-info
 
-Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos
+Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos,Popup
 
 
 Skintegration:
@@ -108,7 +108,7 @@ folgendes include Tag muss innerhalb der ControlGroup mit der ID 9003 ergänzt w
 
 Beispiel:
 ---------------8<---------------
- 1 <?xml version="1.0" encoding="UTF-8"?>
+  1 <?xml version="1.0" encoding="UTF-8"?>
   2 <includes>
   3         <include name="HomeRecentlyAddedInfo">
   4                 <control type="group" id="9003">
@@ -127,6 +127,39 @@ Beispiel:
 5. Icon in das Skin media Verzeichniss kopieren
 
   cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
+
+
+
+6. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
+
+in der Datei "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeMenuItems.xml"
+folgende Stelle suchen:
+
+---------------8<---------------
+        <include name="HomeSubMenuTV">
+                <control type="image" id="90141">
+                        <width>35</width>
+                        <height>35</height>
+                        <texture border="0,0,0,3" flipx="true">HomeSubEnd.png</texture>
+                </control>
+--------------->8---------------
+
+direkt im Anschluss den zusätzlichen Button hinzufügen:
+
+---------------8<---------------
+<!-- Begin neu eingefuegter Button -->
+                <control type="button" id="97149">
+                        <include>ButtonHomeSubCommonValues</include>
+                        <label>Highlights Kategorie</label>
+                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick>
+                </control>
+<!-- Ende neu eingefuegter Button -->
+
+--------------->8---------------
+
+
+
+
 
 
 
@@ -150,6 +183,12 @@ Ruft das Plugin im Splitmode auf mit "sport" als aktualisierungsziel.
 Ruft das Plugin im Splitmode auf und aktualisiert alle watchtypen
 
     XBMC.RunScript(plugin.program.tvhighlights,"?methode=getall_tvdigital")
+
+Startet den Kategorie Dialog für den Master Mode
+
+    XBMC.RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")
+
+
 
 
 -- That's It , viel Spass damit, TDOe 2015 --
