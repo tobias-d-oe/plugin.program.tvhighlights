@@ -6,7 +6,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.7
+#       VERSION:  0.0.8
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -282,7 +282,7 @@ def get_tvdigital_watchtype_highlights(watchtype):
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Comment" %(watchtype,thumbNr), comment )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Extrainfos" %(watchtype,thumbNr), extrainfos )
         PlugParams = 'RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl="'+detailurl+')' 
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Popup" %(watchtype,thumbNr), PlugParams )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Popup" %(watchtype,thumbNr),detailurl)
         debug("===========TIP "+watchtype+" START=============")
         debug("Title "+title)
         debug("Thumb "+thumbUrl)
@@ -316,6 +316,7 @@ def get_movie_details(url):
     picture = re.compile('<img id="galpic" itemprop="image" src="(.+?)"', re.DOTALL).findall(content)[0]
     ### movie title
     titel = re.compile('<li id="broadcast-title" itemprop="name">(.+?)</li>', re.DOTALL).findall(content)[0]
+    debug(titel)
     ### movie subtitle
     subtitel = re.compile('<li id="broadcast-subtitle"><h2>(.+?)</h2>', re.DOTALL).findall(content)
     if len(subtitel) == 0:
@@ -324,7 +325,8 @@ def get_movie_details(url):
         subtitel = subtitel[0]
     debug(len(subtitel))
     ### movie broadcast details
-    playson = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li class="broadcast-info-icons', re.DOTALL).findall(content)
+    playson = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li id="broadcast-genre', re.DOTALL).findall(content)  # class="broadcast-info-icons
+    debug(playson)
     playson = re.compile('<li>(.+?)</li>', re.DOTALL).findall(playson[0])
     if len(playson) == 0:
         playson = "-"
@@ -437,7 +439,11 @@ def get_movie_details(url):
 ##
     ### broadcastinfo
     broadcastinfo = re.compile('class="broadcast-info-icons tvd-tooltip">(.+?)</ul>', re.DOTALL).findall(content)
-    broadcastinfo = re.compile('class="(.+?)"', re.DOTALL).findall(broadcastinfo[0])
+    if len(broadcastinfo) > 0:
+        broadcastinfo = re.compile('class="(.+?)"', re.DOTALL).findall(broadcastinfo[0])
+    else:
+        broadcastinfo = ""
+
     resultdict = {'titel':titel,'subtitel':subtitel,'picture':picture,'ratingValue':ratingValue,
                   'reviewCount':reviewCount,'bestRating':bestRating,'description':description,
                   'ratingdata':ratingdata,'genre':genre,'broadcastdetails':playson,'actorsdata':actorsdata,
@@ -467,7 +473,7 @@ def show_detail_window(detailurl):
     BGPanel = xbmcgui.ControlImage(240,20,800,680,ContentPanelIMG)
     PopupWindow.addControl(BGPanel)
 
-    ### Set Titlle Cover Image
+    ### Set Title Cover Image
     TitleCover = xbmcgui.ControlImage(650,170,320,240,DETAILS['picture'].decode('utf-8'))
     PopupWindow.addControl(TitleCover)
 
@@ -524,6 +530,73 @@ def show_detail_window(detailurl):
 
 
 
+
+##########################################################################################################################
+## Clear possible existing property values from detail info     
+##########################################################################################################################
+def clear_details_of_home():
+    debug("Clear Details from Home")
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Title" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Picture" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Subtitle" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Description" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Broadcastdetails" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Genre" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.RatingType.1" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Rating.1" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.RatingType.2" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Rating.2" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.RatingType.3" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Rating.3" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.RatingType.4" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Rating.4" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.RatingType.5" )
+    WINDOW.clearProperty( "TVHighlightsToday.Info.Rating.5" )
+
+
+
+
+
+##########################################################################################################################
+## Set details to Window (INFO Labels)
+##########################################################################################################################
+def set_details_to_window(detailurl):
+    debug('Set details to info screen')
+    clear_details_of_home()
+    DETAILWIN = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', addonDir, 'Default', '720p')
+    #DETAILWIN = xbmcgui.Window( 3099 )
+    DETAILS   = get_movie_details(detailurl)
+    debug(DETAILS)
+    debug(xbmcgui.getCurrentWindowId())
+    WINDOW.setProperty( "TVHighlightsToday.Info.Title", DETAILS['titel'] )
+    WINDOW.setProperty( "TVHighlightsToday.Info.Picture", DETAILS['picture'] )
+    WINDOW.setProperty( "TVHighlightsToday.Info.Subtitle", DETAILS['subtitel'] )
+    WINDOW.setProperty( "TVHighlightsToday.Info.Description", DETAILS['description'] )
+    WINDOW.setProperty( "TVHighlightsToday.Info.Broadcastdetails", DETAILS['broadcastdetails'] )
+
+    ### Begin Genre
+    genreSTR = ""
+    for g in DETAILS['genre']:
+        if len(genreSTR) > 0:
+            genreSTR = genreSTR+", "+g
+        else:
+            genreSTR = g
+    WINDOW.setProperty( "TVHighlightsToday.Info.Genre", genreSTR )
+    ### End Genre
+
+    ### Begin Rating-Kategorie
+    ratingy=200
+    i=1
+    for r in DETAILS['ratingdata']:
+        WINDOW.setProperty( "TVHighlightsToday.Info.RatingType.%s" %(i), r['ratingtype'] )
+        WINDOW.setProperty( "TVHighlightsToday.Info.Rating.%s" %(i), r['rating'][0] )
+        ratingy = int(ratingy) + 30
+        i += 1
+    ### End Rating-Kategorie
+    DETAILWIN.doModal() 
+
+
+
 ##########################################################################################################################
 ##########################################################################################################################
 ##
@@ -574,6 +647,10 @@ elif methode=='get_single_tvdigital':
         if watchtype in TVDigitalWatchtypes:
             clear_tvdigital_watchtype_highlights(watchtype)
             get_tvdigital_watchtype_highlights(watchtype)
+
+elif methode=='infopopup':
+        debug('Methode: set Detail INFOs to Window')
+        set_details_to_window(detailurl)
 
 elif methode=='get_tvdigital_movie_details':
         debug('Methode: should get moviedetails')

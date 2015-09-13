@@ -12,7 +12,7 @@
                                         <top>310</top>
                                         <height>20</height>
                                         <width>480</width>
-                                        <label>58010</label>
+                                        <label>$ADDON[plugin.program.tvhighlights  576762]</label>
                                         <align>center</align>
                                         <aligny>center</aligny>
                                         <font>font12_title</font>
@@ -353,12 +353,14 @@
                                         <content>
                                                 <item>
                                                         <property name="channel">$INFO[Window.Property(TVHighlightsToday.1.Channel)]</property>
-                                                        <property name="comment">$INFO[Window.Property(TVHighlightsToday.1.Comment)]</property>
+                                                        <!--<property name="comment">$INFO[Window.Property(TVHighlightsToday.1.Comment)]</property>-->
+                                                        <property name="comment">$INFO[Window.Property(TVHighlightsToday.Info.Title)]</property>
                                                         <property name="genre">$INFO[Window.Property(TVHighlightsToday.1.Genre)]</property>
                                                         <property name="country">$INFO[Window.Property(TVHighlightsToday.1.Country)]</property>
                                                         <property name="year">$INFO[Window.Property(TVHighlightsToday.1.Year)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.1.Title)]</label>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")</onclick>
+                                                       <!-- <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")</onclick> -->
 <!--                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick> -->
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</icon>
@@ -379,7 +381,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.2.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.2.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.2.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.2.Popup)]")</onclick>
                                                         <thumb2>$INFO[Window.Property(TVHighlightsToday.2.Logo)]</thumb2>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.2.Logo)]</icon>
                                                         <thumb>$INFO[Window.Property(TVHighlightsToday.2.Thumb)]</thumb>
@@ -395,7 +397,7 @@
                                                         <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.3.Extrainfos)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.3.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.3.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.3.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.3.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</actualicon>
@@ -412,7 +414,7 @@
                                                         <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.4.Extrainfos)]</property>
                                                         <label>$INFO[Window.Property(TVHighlightsToday.4.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.4.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.4.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.4.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</actualicon>
@@ -429,7 +431,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.5.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.5.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.5.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.5.Popup)]")</onclick>
 
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.5.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.5.Logo)]</icon>
@@ -447,7 +449,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.6.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.6.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.6.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.6.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</actualicon>
@@ -464,7 +466,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.7.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.7.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.7.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.7.Popup)]")</onclick>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</actualicon>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</icon>
@@ -481,7 +483,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.8.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.8.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.8.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.8.Popup)]")</onclick>
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</icon>
                                                         <actualicon>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</actualicon>
@@ -499,7 +501,7 @@
 
                                                         <label>$INFO[Window.Property(TVHighlightsToday.9.Title)]</label>
                                                         <label2>$INFO[Window.Property(TVHighlightsToday.9.Time)]</label2>
-                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.9.Popup)]")</onclick>
+                                                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.9.Popup)]")</onclick>
 
                                                         <logo>$INFO[Window.Property(TVHighlightsToday.9.Logo)]</logo>
                                                         <icon>$INFO[Window.Property(TVHighlightsToday.9.Logo)]</icon>

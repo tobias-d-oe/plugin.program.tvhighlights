@@ -5,7 +5,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.7
+#       VERSION:  0.0.8
 #       CREATED:  02.09.2015
 #
 ###########################################################################
@@ -94,14 +94,7 @@ folgendes einfügen:
 
   <include file="script-tvhighlights.xml" />
 
-3. Localisation ergänzen:
-Dazu die Datei "/usr/share/kodi/addons/skin.confluence/language/resource.language.de_de/strings.po" um folgendes ergänzen:
-
-  msgctxt "#58010"
-  msgid "tv highlights today"
-  msgstr "TV Highlights heute"
-
-4. Das include in "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeRecentlyAdded.xml" ergänzen:
+3. Das include in "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeRecentlyAdded.xml" ergänzen:
 folgendes include Tag muss innerhalb der ControlGroup mit der ID 9003 ergänzt werden.
   
   <include>HomeRecentlyAddedTVHighlightsTodayInfo</include>
@@ -124,13 +117,13 @@ Beispiel:
 --------------->8---------------
 
 
-5. Icon in das Skin media Verzeichniss kopieren
+4. Icon in das Skin media Verzeichniss kopieren
 
   cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
 
 
 
-6. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
+5. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
 
 in der Datei "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeMenuItems.xml"
 folgende Stelle suchen:
@@ -187,6 +180,36 @@ Ruft das Plugin im Splitmode auf und aktualisiert alle watchtypen
 Startet den Kategorie Dialog für den Master Mode
 
     XBMC.RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")
+
+
+Beispiel 'onclick' für TV Highlights Element - Öffnet Popup generiert vom Plugin (script-TVHighlights-DialogWindow.xml):
+    <onclick>
+        RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
+    </onclick>
+
+Beispiel 'onclick' für TV Highlights Element - Öffnet Popup generiert vom Plugin (Python):
+    <onclick>
+        RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
+    </onclick>
+
+Die möglichen Properties welche im InfoWindow verbaut sind, sind:
+
+  TVHighlightsToday.Info.Title
+  TVHighlightsToday.Info.Picture
+  TVHighlightsToday.Info.Subtitle
+  TVHighlightsToday.Info.Description
+  TVHighlightsToday.Info.Broadcastdetails
+  TVHighlightsToday.Info.Genre
+  TVHighlightsToday.Info.RatingType.1
+  TVHighlightsToday.Info.Rating.1
+  TVHighlightsToday.Info.RatingType.2
+  TVHighlightsToday.Info.Rating.2
+  TVHighlightsToday.Info.RatingType.3
+  TVHighlightsToday.Info.Rating.3
+  TVHighlightsToday.Info.RatingType.4
+  TVHighlightsToday.Info.Rating.4
+  TVHighlightsToday.Info.RatingType.5
+  TVHighlightsToday.Info.Rating.5
 
 
 

@@ -1,3 +1,9 @@
+v0.0.8
+- bug fix splitmode popup
+- new infowin function for skinners (XML)
+- localisation (XML)
+- grabber improvement for website bugs
+
 v0.0.7
 - added categorie dialog
 - modification of script-tvhighlights.xml
