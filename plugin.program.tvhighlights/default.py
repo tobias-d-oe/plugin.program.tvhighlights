@@ -35,7 +35,7 @@ import xbmcgui
 import xbmcaddon
 import xbmcplugin
 
-NODEBUG = False
+NODEBUG = True
 
 addon               = xbmcaddon.Addon()
 addonID             = addon.getAddonInfo('id')
@@ -182,8 +182,6 @@ def get_tvdigital_mastermode_highlights(mastertype):
         WINDOW.setProperty( "TVHighlightsToday.%s.Genre" %(thumbNr), genre )
         WINDOW.setProperty( "TVHighlightsToday.%s.Comment" %(thumbNr), comment )
         WINDOW.setProperty( "TVHighlightsToday.%s.Extrainfos" %(thumbNr), extrainfos )
-#        WINDOW.setProperty( "TVHighlightsToday.%s.Popup" %(thumbNr), detailurl )
-        PlugParams = 'RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl="'+detailurl+')'
         WINDOW.setProperty( "TVHighlightsToday.%s.Popup" %(thumbNr),detailurl)
 
         debug("===========TIP START=============")
@@ -282,7 +280,6 @@ def get_tvdigital_watchtype_highlights(watchtype):
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Genre" %(watchtype,thumbNr), genre )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Comment" %(watchtype,thumbNr), comment )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Extrainfos" %(watchtype,thumbNr), extrainfos )
-        PlugParams = 'RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl="'+detailurl+')' 
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Popup" %(watchtype,thumbNr),detailurl)
         debug("===========TIP "+watchtype+" START=============")
         debug("Title "+title)
@@ -430,12 +427,6 @@ def get_movie_details(url):
            ratingdict = {'ratingtype':ratingtype, 'rating': ratingclass}
            ratingdata.append(ratingdict)
     else:
-#        ratingdict = {'ratingtype':'Spannung', 'rating': '-'}
-#        ratingdata.append(ratingdict)
-#        ratingdict = {'ratingtype':'Action', 'rating': '-'}
-#        ratingdata.append(ratingdict)
-#        ratingdict = {'ratingtype':'', 'rating': '-'}
-#        ratingdata.append(ratingdict)
         ratingdata = [ {'ratingtype':'Spannung', 'rating':'-'}, {'ratingtype':'Action', 'rating':'-'}, {'ratingtype':'Humor', 'rating':'-'}, {'ratingtype':'Romantik', 'rating':'-'}, {'ratingtype':'Sex', 'rating':'-'} ]
 ##
     ### broadcastinfo
@@ -624,11 +615,6 @@ else:
     watchtype = None
     detailurl= "-"
 
-#if methode==None or not (watchtype in TVDigitalWatchtypes):
-#        clear_tvdigital_watchtype_highlights('spielfilm')
-#        get_tvdigital_watchtype_highlights('spielfilm')
-
-
 debug("Methode in Script:")
 debug(methode)
 
@@ -690,18 +676,20 @@ elif methode=='settings' or methode==None or not (watchtype in TVDigitalWatchtyp
             clear_tvdigital_mastermode_highlights()
             get_tvdigital_mastermode_highlights(mastertype)
         else:
-            setting_spielfilm  = addon.getSetting('setting_spielfilm')
-            setting_sport  = addon.getSetting('setting_sport')
+            setting_spielfilm     = addon.getSetting('setting_spielfilm')
+            setting_sport         = addon.getSetting('setting_sport')
             setting_unterhaltung  = addon.getSetting('setting_unterhaltung')
-            setting_serie  = addon.getSetting('setting_serie')
-            setting_kinder  = addon.getSetting('setting_kinder')
-            setting_doku  = addon.getSetting('setting_doku')
+            setting_serie         = addon.getSetting('setting_serie')
+            setting_kinder        = addon.getSetting('setting_kinder')
+            setting_doku          = addon.getSetting('setting_doku')
+
             debug("setting_spielfilm"+setting_spielfilm)
             debug("setting_sport"+setting_sport)
             debug("setting_unterhaltung"+setting_unterhaltung)
             debug("setting_serie"+setting_serie)
             debug("setting_kinder"+setting_kinder)
             debug("setting_doku"+setting_doku)
+
             if setting_spielfilm=='true':
                 clear_tvdigital_watchtype_highlights('spielfilm')
                 get_tvdigital_watchtype_highlights('spielfilm')
