@@ -34,7 +34,7 @@
 	                        <height>30</height>
 	                        <font>font13_title</font>
 	               <!--         <label>TV Highlights Filminformation</label>  -->
-	                        <label>$ADDON[plugin.program.tvhighlights  576758]</label>
+	                        <label>$ADDON[plugin.program.tvhighlights  30100]</label>
 	                        <align>center</align>
 	                        <aligny>center</aligny>
 	                        <textcolor>selected</textcolor>
@@ -99,7 +99,7 @@
                                   <font>font20_title</font>
                                   <textcolor>blue</textcolor>
                             <!--      <label>Genre:</label>  -->
-                                  <label>$ADDON[plugin.program.tvhighlights  576759]</label>
+                                  <label>$ADDON[plugin.program.tvhighlights  30101]</label>
                                   <align>left</align>
                                   <aligny>center</aligny>
                         </control>
@@ -138,7 +138,7 @@
                                   <height>15</height>
                                   <font>font20_title</font>
                                   <textcolor>blue</textcolor>
-                                  <label>$ADDON[plugin.program.tvhighlights  576760]</label>
+                                  <label>$ADDON[plugin.program.tvhighlights  30102]</label>
 <!--                                  <label>Rating:</label> -->
                                   <align>left</align>
                                   <aligny>center</aligny>
@@ -261,7 +261,7 @@
                                   <font>font20_title</font>
                                   <textcolor>blue</textcolor>
 <!--                                  <label>Beschreibung:</label> -->
-                                  <label>$ADDON[plugin.program.tvhighlights  576761]</label>
+                                  <label>$ADDON[plugin.program.tvhighlights  30103]</label>
                                   <align>left</align>
                                   <aligny>center</aligny>
                         </control>

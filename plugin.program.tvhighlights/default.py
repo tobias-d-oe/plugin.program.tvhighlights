@@ -41,6 +41,7 @@ addon               = xbmcaddon.Addon()
 addonID             = addon.getAddonInfo('id')
 addonFolder         = downloadScript = xbmc.translatePath('special://home/addons/'+addonID).decode('utf-8')
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID).decode('utf-8')
+translation = addon.getLocalizedString
 
 addonDir   = addon.getAddonInfo("path")
 XBMC_SKIN  = xbmc.getSkinDir()
@@ -659,7 +660,7 @@ elif methode=='get_tvdigital_movie_details':
 elif methode=='show_select_dialog':
     debug('Methode: show select dialog')
     dialog = xbmcgui.Dialog()
-    ret = dialog.select('TV Highlights Rubrik Auswahl', ['Spielfilm', 'Sport', 'Serie', 'Unterhaltung', 'Doku und Info', 'Kinder'])
+    ret = dialog.select(str(translation(30011)), [str(translation(30120)), str(translation(30121)), str(translation(30122)), str(translation(30123)), str(translation(30124)), str(translation(30125))])
     debug(ret)
     if ret==0:
         clear_tvdigital_mastermode_highlights()

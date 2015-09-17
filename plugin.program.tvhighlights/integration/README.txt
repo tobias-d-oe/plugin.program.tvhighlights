@@ -143,7 +143,7 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 <!-- Begin neu eingefuegter Button -->
                 <control type="button" id="97149">
                         <include>ButtonHomeSubCommonValues</include>
-                        <label>Highlights Kategorie</label>
+                        <label>TV Highlights Rubrik</label>
                         <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick>
                 </control>
 <!-- Ende neu eingefuegter Button -->

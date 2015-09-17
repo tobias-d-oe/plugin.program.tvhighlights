@@ -33,7 +33,13 @@ icon = xbmc.translatePath("special://home/addons/plugin.program.tvhighlights/ico
 mdelay = 14400 # 4h
 #mdelay = 120 # 2m
 
-xbmc.executebuiltin('XBMC.Notification(TV Highlights, Dienst gestartet ,4000,'+icon+')')
+addon       = xbmcaddon.Addon()
+enableinfo  = addon.getSetting('enableinfo')
+translation = addon.getLocalizedString
+
+if enableinfo == true:
+    xbmc.executebuiltin('XBMC.Notification(str(translation(30010)), str(translation(30106)) ,4000,'+icon+')')
+
 xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
 
 
