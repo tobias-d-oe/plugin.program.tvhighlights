@@ -1,3 +1,10 @@
+v0.0.9
+- Added fanart picture
+- localisation finished
+- added possibility to disable startup infopopup from service
+- added english language file
+- code cleanup
+
 v0.0.8
 - bug fix splitmode popup
 - new infowin function for skinners (XML)
