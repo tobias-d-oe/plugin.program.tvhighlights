@@ -6,7 +6,7 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.0.9
+#       VERSION:  0.1.0
 #       CREATED:  02.09.2015
 #
 ###########################################################################
