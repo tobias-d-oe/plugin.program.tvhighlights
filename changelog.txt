@@ -1,3 +1,8 @@
+v0.1.2
+- added functions to get settings
+- added possibility to change refresh interval
+- added timeframe filter
+
 v0.1.1
 - localisation bugfix
 - genre-order fix

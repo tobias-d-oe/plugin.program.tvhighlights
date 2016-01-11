@@ -7,7 +7,7 @@
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
 #       VERSION:  0.1.1
-#       CREATED:  20.10.2015
+#       CREATED:  02.09.2015
 #
 ###########################################################################
 #
@@ -30,8 +30,9 @@
 import os,sys,time,xbmc,xbmcgui,xbmcaddon
 
 icon = xbmc.translatePath("special://home/addons/plugin.program.tvhighlights/icon.png")
-mdelay = 14400 # 4h
+#mdelay = 14400 # 4h
 #mdelay = 120 # 2m
+mdelay = 0
 
 addon       = xbmcaddon.Addon()
 enableinfo  = addon.getSetting('enableinfo')
@@ -39,10 +40,19 @@ translation = addon.getLocalizedString
 notifyheader= str(translation(30010))
 notifytxt   = str(translation(30106))
 
+mdelay = int(addon.getSetting('mdelay'))
+mdelay2 = int(mdelay) * int(60)
+xbmc.log("Refresh Interval2: %s" % (mdelay2))
+if int(addon.getSetting('mdelay')) == 0:
+    xbmc.log("Exit TV Highlights Service")
+    sys.exit()
+
+xbmc.log("Start TV Highlights Service")
 if enableinfo == 'true':
     xbmc.executebuiltin('XBMC.Notification('+notifyheader+', '+notifytxt+' ,4000,'+icon+')')
 
 xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
+
 
 
 if __name__ == '__main__':
@@ -50,7 +60,7 @@ if __name__ == '__main__':
  
     while not monitor.abortRequested():
         # Sleep/wait for abort for $mdelay seconds
-        if monitor.waitForAbort(mdelay):
+        if monitor.waitForAbort(float(mdelay2)):
             # Abort was requested while waiting. We should exit
             break
         xbmc.log("Refreshing TVHighlights! %s" % time.time(), level=xbmc.LOGDEBUG)

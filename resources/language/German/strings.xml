@@ -18,6 +18,8 @@
     <string id="30112">Splitmode</string>
     <string id="30113">Zeige SKY Sender</string>
     <string id="30114">Info bei Systemstart</string>
+    <string id="30126">Zeige vergangene</string>
+    <string id="30127">Aktualisierungsinterval</string>
 
     <string id="30120">Spielfilm</string>
     <string id="30121">Serie</string>
@@ -25,5 +27,6 @@
     <string id="30123">Unterhaltung</string>
     <string id="30124">Doku und Info</string>
     <string id="30125">Kinder</string>
+
 </strings>
 

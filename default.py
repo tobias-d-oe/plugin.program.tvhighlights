@@ -34,6 +34,8 @@ import os
 import xbmcgui
 import xbmcaddon
 import xbmcplugin
+import time 
+import datetime
 
 NODEBUG = True
 
@@ -66,10 +68,10 @@ SKYChannel = [ 'Sky Action', 'Sky Cinema', 'Sky Cinema +1', 'Sky Cinema +24', 'S
 
 TVDigitalWatchtypes = ['spielfilm', 'sport', 'serie', 'unterhaltung', 'doku-und-info', 'kinder'] 
 
-mastermode = addon.getSetting('mastermode')
-showsky    = addon.getSetting('showsky')
-mastertype = addon.getSetting('mastertype')
-
+mastermode    = addon.getSetting('mastermode')
+showsky       = addon.getSetting('showsky')
+mastertype    = addon.getSetting('mastertype')
+showtimeframe = addon.getSetting('showtimeframe')
 
 ##########################################################################################################################
 ##
@@ -160,7 +162,7 @@ def get_tvdigital_mastermode_highlights(mastertype):
         detailurl = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(entry)[0]
         detailurl = re.compile('href="(.+?)"', re.DOTALL).findall(detailurl)[0]
         date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(entry)[0]
-        time = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(entry)[0]
+        highlighttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(entry)[0]
         descs = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(entry)
         extrainfos = descs[0]
         if len(descs) == 2:
@@ -172,9 +174,26 @@ def get_tvdigital_mastermode_highlights(mastertype):
         extrainfos2 = extrainfos.split('|')
         genre = extrainfos2[0]
     
+        if showtimeframe == "true":
+            debug("Show only upcoming events")
+            refreshtimestamp = int(time.time())
+            now = datetime.datetime.now()
+            highlightstimestampstr = '%s-%s-%s %s:00' % (now.year, now.month, now.day, highlighttime)
+            highlightstimestampstr = highlightstimestampstr.replace('-', ' ')
+            debug(highlightstimestampstr)
+            debug(time.mktime(time.strptime(highlightstimestampstr,"%Y %m %d %H:%M:%S")))
+
+            highlightstimestamp = time.mktime(time.strptime(highlightstimestampstr,"%Y %m %d %H:%M:%S"))
+            debug("highlightstimestampstr "+highlightstimestampstr)
+            debug("highlightstimestamp %s " % (int(highlightstimestamp)))
+            debug("refreshtimestamp %d" %(refreshtimestamp))
+            if (highlightstimestamp <= refreshtimestamp):
+                debug("Throw away entry, its in the past")
+                continue
+
         WINDOW.setProperty( "TVHighlightsToday.%s.Title" %(thumbNr), title )
         WINDOW.setProperty( "TVHighlightsToday.%s.Thumb" %(thumbNr), thumbUrl )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Time" %(thumbNr), time )
+        WINDOW.setProperty( "TVHighlightsToday.%s.Time" %(thumbNr), highlighttime )
         WINDOW.setProperty( "TVHighlightsToday.%s.Date" %(thumbNr), date )
         WINDOW.setProperty( "TVHighlightsToday.%s.Channel" %(thumbNr), channel )
         WINDOW.setProperty( "TVHighlightsToday.%s.Icon" %(thumbNr), thumbUrl )
@@ -187,7 +206,7 @@ def get_tvdigital_mastermode_highlights(mastertype):
         debug("===========TIP START=============")
         debug("Title "+title)
         debug("Thumb "+thumbUrl)
-        debug("Time "+time)
+        debug("Time "+highlighttime)
         debug("Date "+date)
         debug("Channel "+channel)
         debug("Icon "+thumbUrl)
@@ -643,6 +662,26 @@ elif methode=='get_tvdigital_movie_details':
         debug('Methode: should get moviedetails')
         show_detail_window(detailurl)
 
+elif methode=='get_mode':
+	debug('Methode: getStatus') #FIXIT
+        print mastermode	
+
+elif methode=='get_split_elements':
+        debug('Methode: get Split Elements')
+        setting_spielfilm     = addon.getSetting('setting_spielfilm')
+        setting_sport         = addon.getSetting('setting_sport')
+        setting_unterhaltung  = addon.getSetting('setting_unterhaltung')
+        setting_serie         = addon.getSetting('setting_serie')
+        setting_kinder        = addon.getSetting('setting_kinder')
+        setting_doku          = addon.getSetting('setting_doku')
+        resdict = {'spielfilm':setting_spielfilm,
+                   'sport':setting_sport,
+                   'unterhaltung':setting_unterhaltung,
+                   'serie':setting_serie,
+                   'kinder':setting_kinder,
+                   'doku':setting_doku}
+        print resdict
+
 elif methode=='show_select_dialog':
     debug('Methode: show select dialog')
     dialog = xbmcgui.Dialog()
@@ -708,5 +747,4 @@ elif methode=='settings' or methode==None or not (watchtype in TVDigitalWatchtyp
             if setting_sport=='true':
                 clear_tvdigital_watchtype_highlights('sport')
                 get_tvdigital_watchtype_highlights('sport')
-    
     
