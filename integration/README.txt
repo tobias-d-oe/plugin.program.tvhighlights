@@ -77,13 +77,16 @@ Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Titl
 Skintegration:
 ==============
 
-Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich:
+Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich (als Beispiel
+dient hier die Integration unter einer Linux-Distribution). Die zum Kopieren erforderlichen Dateien befinden
+sich im Ordner 'integration' des Plugins (plugin.program.tvhighlights):
 
+cd $HOME/.kodi/addons/plugin.program.tvhighlights/integration
 
-1. Kopieren des XML Files in den Confluence Skin Ordner
+1. Kopieren der XML Files und Icons in den Confluence Skin Ordner
 
   cp script-tvhighlights.xml /usr/share/kodi/addons/skin.confluence/720p/
-
+  cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
 
 2. Script als include am Skin "anmelden"
 Hierzu die Datei "/usr/share/kodi/addons/skin.confluence/720p/includes.xml" editieren, und unterhalb der Zeile:
@@ -117,12 +120,6 @@ Beispiel:
 --------------->8---------------
 
 
-4. Icon in das Skin media Verzeichniss kopieren
-
-  cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
-
-
-
 5. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
 
 in der Datei "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeMenuItems.xml"
@@ -149,11 +146,6 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 <!-- Ende neu eingefuegter Button -->
 
 --------------->8---------------
-
-
-
-
-
 
 
 Pluginaufruf:
