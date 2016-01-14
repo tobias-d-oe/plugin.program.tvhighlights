@@ -120,7 +120,7 @@ Beispiel:
 --------------->8---------------
 
 
-5. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
+4. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
 
 in der Datei "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeMenuItems.xml"
 folgende Stelle suchen:
