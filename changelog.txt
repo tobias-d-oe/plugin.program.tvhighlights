@@ -1,3 +1,14 @@
+v0.1.5
+- dependencies between PVR and shown TV Highlights
+- Changes the Update mechanism
+- added Timerbutton (service.kn.switchtimer)
+- lot of code rework andcleanup
+- Info-Window: changed default button
+- Workarounded python bug
+- Added json file for PVR->TV Digital Channel binding
+- Added HD priorizer
+- lots more ... 
+
 v0.1.2
 - added functions to get settings
 - added possibility to change refresh interval

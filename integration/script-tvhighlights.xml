@@ -45,7 +45,7 @@
                                                         <height>310</height>
                                                         <texture border="15">RecentAddedBack.png</texture>
                                                 </control>
-
+<!--
                                                 <control type="image">
                                                         <description>background2</description>
 
@@ -56,7 +56,7 @@
 
                                                         <texture border="15">RecentAddedBackWhite.png</texture>
                                                 </control>
-
+-->
                                                 <control type="image">
                                                         <left>10</left>
                                                         <top>10</top>
@@ -201,7 +201,7 @@
                                                         <bordersize>5</bordersize>
                                                         <visible>!Control.HasFocus(58051)</visible>
                                                 </control>
-
+<!--
                                                 <control type="image">
                                                         <description>background2</description>
                                                         <left>20</left>
@@ -210,7 +210,7 @@
                                                         <height>40</height>
                                                         <texture border="15">RecentAddedBackWhite.png</texture>
                                                 </control>
-
+-->
 
                                                 <control type="image">
                                                         <left>20</left>
@@ -353,8 +353,7 @@
                                         <content>
                                                 <item>
                                                         <property name="channel">$INFO[Window.Property(TVHighlightsToday.1.Channel)]</property>
-                                                        <!--<property name="comment">$INFO[Window.Property(TVHighlightsToday.1.Comment)]</property>-->
-                                                        <property name="comment">$INFO[Window.Property(TVHighlightsToday.Info.Title)]</property>
+                                                        <property name="comment">$INFO[Window.Property(TVHighlightsToday.1.Comment)]</property>
                                                         <property name="genre">$INFO[Window.Property(TVHighlightsToday.1.Genre)]</property>
                                                         <property name="country">$INFO[Window.Property(TVHighlightsToday.1.Country)]</property>
                                                         <property name="year">$INFO[Window.Property(TVHighlightsToday.1.Year)]</property>

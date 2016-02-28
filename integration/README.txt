@@ -5,8 +5,8 @@
 #        AUTHOR:  Tobias D. Oestreicher
 #
 #       LICENSE:  GPLv3 <http://www.gnu.org/licenses/gpl.txt>
-#       VERSION:  0.1.1
-#       CREATED:  20.10.2015
+#       VERSION:  0.1.2
+#       CREATED:  22.01.2016
 #
 ###########################################################################
 #
@@ -23,7 +23,7 @@
 # with this program; if not, see <http://www.gnu.org/licenses/>.
 #
 ###########################################################################
-#     CHANGELOG:  (02.09.2015) TDOe - First Publishing
+#     CHANGELOG:  (22.01.2016) TDOe - First Publishing
 ###########################################################################
 
 
@@ -32,8 +32,12 @@ Beschreibung:
 
 Das Plugin plugin.program.tvhighlights holt von tvdigital.de die TV-Highlights des Tages und stellt diese dann als 
 RecentlyAdded Widget beim Menüpunkt TV bereit (nach Skintegration).
-Es kann im Settingsmenü eingestellt werden welche Kategorie verwendet werden soll für die Anzeige.
-Zur Auswahl tehen hier:
+Hierbei richtet sich das Plugin anhand der im PVR befindlichen Sender, und zeigt nur TV Highlights für diese an.
+Desweiteren besteht eine integration des Dienstes service.kn.switchtimer in der Sendungs-Detailansicht mit 
+welchem die Highlights zum umschalten vorgemerkt werden können.
+
+Im Settingsmenü kann eingestellt werden welche Kategorie für die Anzeige und Aktualisierung verwendet werden soll.
+Zur Auswahl stehen hier folgende Kategorien:
   * spielfilme
   * serien
   * sport
@@ -41,8 +45,12 @@ Zur Auswahl tehen hier:
   * doku und info
   * unterhaltung
 
-Das Plugin wird bei jedem Kodi Start ausgefüht und aktualisiert die Daten. Daraufhin geht es in eine Loop 
-und aktualisiert sich alle 4h.
+Ein Popup-Window kann für die Highlights geöffnet werden, in welchem Detailinformationen zur Sendung angezeigt werden, und mithilfe des Dienstes "service.kn.switchtimer" (Danke BJ1) kann ein Umschalten vorgemerkt werden.
+
+Das Plugin wird bei jedem Kodi Start ausgefüht und aktualisiert die Daten. Je nachdem welches Interval man für Content Refresh eingestellt hat geht es in eine Loop 
+und aktualisiert die TV-Highlights anhand der eingestellten Minuten. Ist hier die "0" ausgewählt, beendet sich der Dienst, ohne Daten abzurufen. Die Anzeige Aktualisierung kann hier seperat eingestellt werden.
+
+
 
 Modi:
 ==============
@@ -51,19 +59,11 @@ Es gibt zwei Modi in denen das Plugin betrieben werden kann:
 - Mastermode
 - Splitmode
 
+
 Mastermode:
 --------------
-Im Mastermode kann nur eine Kategorie ausgewählt werden. Nach Abruf kann auf die Ergebnisse über folgende INFO Variablen zugegriffen werden:
--TVHighlightsToday.<nr>.<bezeichnung>
-
-Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos,Popup
-
-Splitmode:
---------------
-Hierbei können die Kategorien ausgewählt werden welche aktualisiert werden sollen. Das Ergebniss findet sich dann in folgenden Variablen wieder:
--TV<watchtype>HighlightsToday.<nr>.<bezeichnung>
-
-Als watchtype kann folgendes verwendet werden: 
+Im Mastermode wird eine Kategorie ausgewählt welche vom Plugin automatisch aktualisiert wird.
+Als Kategorie (watchtype) kann folgendes verwendet werden: 
 - spielfilm
 - serie
 - unterhaltung
@@ -71,7 +71,27 @@ Als watchtype kann folgendes verwendet werden:
 - kinder
 - doku-und-info
 
-Anstelle von <bezeichnung> können folgende Bezeichnungen verwendet werden: Title,Thumb,Time,Date,Channel,Icon,Logo,Genre,Comment,Year,Duration,Extrainfos,Popup
+
+
+Splitmode:
+--------------
+Hierbei können mehrere Kategorien ausgewählt werden welche vom Plugin aktualisiert werden sollen. 
+Die zur Verfügung stehenden Kategorien sind die selben wie im Mastermode.
+
+
+Einstellungen:
+==============
+Das Plugin kann so konfiguriert werden dass nur Sendungen angezeigt werden, welche beim letzten screen refresh nicht schon in der Vergangenheit lagen.
+Weiterhin kann das Content Refresh Interval konfiguriert werden. (Bitte denkt an den Hoster, also nicht zu oft aktualisieren. Denke kleiner 120 Minuten ist unnötig)
+Auch die Popup Nachricht beim Start von kodi und dem Content-Refresh kann aktiviert/deaktiviert werden.
+
+
+
+
+
+=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+=*=                                                              Für Skinner                                                                        =*=
+=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
 
 
 Skintegration:
@@ -80,9 +100,9 @@ Skintegration:
 Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich:
 
 
-1. Kopieren des XML Files in den Confluence Skin Ordner
+1. Kopieren des XML Files in den Confluence Skin Ordner (für mastermode:script-tvhighlights.xml; für splitmode:script-tvhighlights-splitmode-simple.xml)
 
-  cp script-tvhighlights.xml /usr/share/kodi/addons/skin.confluence/720p/
+  cp script-tvhighlights.xml /usr/share/kodi/addons/skin.confluence/720p/script-tvhighlights.xml
 
 
 2. Script als include am Skin "anmelden"
@@ -117,13 +137,7 @@ Beispiel:
 --------------->8---------------
 
 
-4. Icon in das Skin media Verzeichniss kopieren
-
-  cp RecentAddedBackWhite.png /usr/share/kodi/addons/skin.confluence/media/
-
-
-
-5. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
+4. Kategorie Wahl für TV Highlights im Master Mode hinzufügen (optional)
 
 in der Datei "/usr/share/kodi/addons/skin.confluence/720p/IncludesHomeMenuItems.xml"
 folgende Stelle suchen:
@@ -153,10 +167,7 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 
 
 
-
-
-
-Pluginaufruf:
+Pluginaufrufe:
 ==============
 
 Durch die Methode "settings" wird je nach gesetztem Benutzersetting entschieden was aktualisiert werden soll in welchem Modus.
@@ -173,9 +184,11 @@ Ruft das Plugin im Splitmode auf mit "sport" als aktualisierungsziel.
 
     XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_single_tvdigital&watchtype=sport")
 
+
 Ruft das Plugin im Splitmode auf und aktualisiert alle watchtypen
 
     XBMC.RunScript(plugin.program.tvhighlights,"?methode=getall_tvdigital")
+
 
 Startet den Kategorie Dialog für den Master Mode
 
@@ -187,19 +200,103 @@ Beispiel 'onclick' für TV Highlights Element - Öffnet Popup generiert vom Plug
         RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
     </onclick>
 
+
 Beispiel 'onclick' für TV Highlights Element - Öffnet Popup generiert vom Plugin (Python):
     <onclick>
         RunScript(plugin.program.tvhighlights,"?methode=get_tvdigital_movie_details&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
     </onclick>
 
-Die möglichen Properties welche im InfoWindow verbaut sind, sind:
 
+Beispiel 'onclick' für TV Highlights Element - Setzt Properties für Filmdetails auf das Home Window:
+    <onclick>
+        RunScript(plugin.program.tvhighlights,"?methode=set_details_to_home&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
+    </onclick>
+
+
+Zusätzliche Methoden welche verwendet werden können:
+ 
+  get_master_elements    (schreibt TVHighlightsToday.Mastermode)
+  get_split_elements     (schreibt TVHighlightsToday.Splitmode.*)
+  refresh_splitmode      (aktualisiert nur Anzeige, zwecks timeframe,kein unnötiger Abruf von Daten von tvdigital)
+  refresh_mastermode     (aktualisiert nur Anzeige, zwecks timeframe,kein unnötiger Abruf von Daten von tvdigital)
+  get_mode               (schreibt TVHighlightsToday.Mode)
+  getall_tvdigital       (aktualisiert ALLE Kategorien für den Splitmode)
+  get_single_tvdigital   (aktualisiert eine Kategorie für den Splitmode (zusätzlich muss watchtype angegeben werden)
+  set_splitmode          (schaltet die Mode des Plugins auf splitmode, aktualisiert den Content und setzt alle Properties)
+  set_mastermode         (schaltet die Mode des Plugins auf mastermode, aktualisiert den Content und setzt alle Properties)
+
+  in folgender Form: 
+      <onclick>
+          RunScript(plugin.program.tvhighlights,"?methode=METHODENNAME")
+      </onclick>
+
+
+
+Prooperties:
+============
+
+Mastermode:
+-----------
+  TVHighlightsToday.<nr>.Title
+  TVHighlightsToday.<nr>.Thumb
+  TVHighlightsToday.<nr>.Time
+  TVHighlightsToday.<nr>.Date
+  TVHighlightsToday.<nr>.Channel
+  TVHighlightsToday.<nr>.Icon
+  TVHighlightsToday.<nr>.Logo
+  TVHighlightsToday.<nr>.Genre
+  TVHighlightsToday.<nr>.Comment
+  TVHighlightsToday.<nr>.Year
+  TVHighlightsToday.<nr>.Duration
+  TVHighlightsToday.<nr>.Extrainfos
+  TVHighlightsToday.<nr>.Popup
+  TVHighlightsToday.<nr>.WatchType
+
+
+Splitmode:
+----------
+  TV<watchtype>HighlightsToday.<nr>.Title
+  TV<watchtype>HighlightsToday.<nr>.Thumb
+  TV<watchtype>HighlightsToday.<nr>.Time
+  TV<watchtype>HighlightsToday.<nr>.Date
+  TV<watchtype>HighlightsToday.<nr>.Channel
+  TV<watchtype>HighlightsToday.<nr>.Icon
+  TV<watchtype>HighlightsToday.<nr>.Logo
+  TV<watchtype>HighlightsToday.<nr>.Genre
+  TV<watchtype>HighlightsToday.<nr>.Comment
+  TV<watchtype>HighlightsToday.<nr>.Year
+  TV<watchtype>HighlightsToday.<nr>.Duration
+  TV<watchtype>HighlightsToday.<nr>.Extrainfos
+  TV<watchtype>HighlightsToday.<nr>.Popup
+  TV<watchtype>HighlightsToday.<nr>.WatchType
+
+
+Alle Modi:
+----------
+  TVHighlightsToday.Mode                     (splitmode/mastermode)
+  TVHighlightsToday.Splitmode.Spielfilm      (true/false)
+  TVHighlightsToday.Splitmode.Sport          (true/false)
+  TVHighlightsToday.Splitmode.Unterhaltung   (true/false)
+  TVHighlightsToday.Splitmode.Serie          (true/false)
+  TVHighlightsToday.Splitmode.Kinder         (true/false)
+  TVHighlightsToday.Splitmode.Doku           (true/false)
+  TVHighlightsToday.Mastermode               (spielfilm/sport/serie/unterhaltung/doku-und-info/kinder)
+
+
+Info-Window:
+------------
   TVHighlightsToday.Info.Title
   TVHighlightsToday.Info.Picture
   TVHighlightsToday.Info.Subtitle
   TVHighlightsToday.Info.Description
   TVHighlightsToday.Info.Broadcastdetails
   TVHighlightsToday.Info.Genre
+  TVHighlightsToday.Info.Channel
+  TVHighlightsToday.Info.Logo
+  TVHighlightsToday.Info.PVRID
+  TVHighlightsToday.Info.StartTime
+  TVHighlightsToday.Info.EndTime
+  TVHighlightsToday.Info.StartDate
   TVHighlightsToday.Info.RatingType.1
   TVHighlightsToday.Info.Rating.1
   TVHighlightsToday.Info.RatingType.2
@@ -212,6 +309,30 @@ Die möglichen Properties welche im InfoWindow verbaut sind, sind:
   TVHighlightsToday.Info.Rating.5
 
 
+Debugging:
+==========
+Für besseres debugging bitte im Plugin in Zeile  von
+
+NODEBUG = True
+
+auf 
+
+NODEBUG = False
+
+ändern. Das kodi.log dann bitte per PN über kodinerds.net zusenden.
 
 
--- That's It , viel Spass damit, TDOe 2015 --
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!                                                   ACHTUNG                                                     !!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+Es ist NICHT notwendig Aktualisierungen innerhalb irgendwelcher <onload>`s auszuführen!
+Das Plugin verfügt über einen Dienst, welcher sich sowohl um die Content Aktualisierung als auch
+um die Aktualisierung der Angezeigten Daten kümmert. Beide Werte sind einstellbar. Hierbei gilt 
+dass das das Screen-Refresh Interval kleiner sein muss als das Content-Refresh Interval.
+Das Content-Refresh Interval sollte mit Bedacht gewählt werden, siehe hierzu:
+http://www.kodinerds.net/index.php/Thread/47201-TEST-RELEASE-TV-Highlights-Grabber-TV-Digital/?postID=271794#post271794
+
+
+-- That's It , viel Spass damit, TDOe 2015-2016 --

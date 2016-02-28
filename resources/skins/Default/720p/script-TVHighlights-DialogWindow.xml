@@ -6,16 +6,16 @@
 	<controls>
 		<control type="group" id="576757">
 			<left>235</left>
-                        <top>20</top>
+                        <top>10</top>
                         <width>810</width>
-                        <height>680</height>
+                        <height>700</height>
 
 	                <control type="image">
 	                        <description>background image</description>
 	                        <left>0</left>
 	                        <top>0</top>
 	                        <width>810</width>
-	                        <height>680</height>
+	                        <height>700</height>
 	                        <texture border="40">ConfluenceDialogBack2.png</texture>
 	                </control>
 	                <control type="image">
@@ -58,8 +58,25 @@
 	                        <visible>system.getbool(input.enablemouse)</visible>
 	                </control>
 	
-
-
+                <control type="button" id="10">
+                        <description>Yes button</description>
+                        <left>305</left>
+                        <top>635</top>
+                        <width>200</width>
+                        <height>40</height>
+                        <label>$ADDON[plugin.program.tvhighlights  30107]</label>
+                        <font>font12_title</font>
+                        <textcolor>white</textcolor>
+                        <focusedcolor>white</focusedcolor>
+                        <align>center</align>
+                        <onleft>10</onleft>
+                        <onright>10</onright>
+                        <onup>855655</onup>
+                        <ondown>855655</ondown>
+                        <visible>System.HasAddon(service.kn.switchtimer)</visible>
+<!--                        <onclick>RunScript(service.kn.switchtimer,action=delall</onclick>-->
+                        <onclick>RunScript(service.kn.switchtimer,action=add,channel=$INFO[Window(Home).Property(TVHighlightsToday.Info.Channel)],icon=$INFO[Window(Home).Property(TVHighlightsToday.Info.Logo)],date=$INFO[Window(Home).Property(TVHighlightsToday.Info.Date)],title=$INFO[Window(Home).Property(TVHighlightsToday.Info.Title)])</onclick>
+                </control>
 
                         <control type="label">
                                   <left>20</left>
@@ -90,6 +107,18 @@
                                   <height>240</height>
 				  <texture border="15">$INFO[Window(Home).Property(TVHighlightsToday.Info.Picture)]</texture>
                         </control>
+
+
+                        <control type="image">
+                                <description>Channel Logo</description>
+                                <left>635</left>
+                                <top>360</top>
+                                <width>80</width>
+                                <height>42</height>
+                                <texture>$INFO[Window(Home).Property(TVHighlightsToday.Info.Logo)]</texture>
+                                <aspectratio>scale</aspectratio>
+                        </control>
+
 
 			<control type="label">
                                   <left>60</left>

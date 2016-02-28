@@ -2,10 +2,10 @@
 <settings>
     <category label="30110">
         <setting id="mastermode" type="bool" label="30111" default="true"/>
-        <setting id="showsky" type="bool" label="30113" default="true"/>
         <setting id="enableinfo" type="bool" label="30114" default="true"/>
-        <setting id="showtimeframe" type="bool" label="30126" default="false"/>
-        <setting id="mdelay" type="enum" label="30127" values="0|30|60|90|120|150|180|210|240|720|1440" default="120"/>
+        <setting id="showtimeframe" type="bool" label="30126" default="true"/>
+        <setting id="mdelay" type="labelenum" label="30127" values="0|30|60|90|120|150|180|210|240|720|1440" default="180"/>
+        <setting id="screenrefresh" type="labelenum" label="30128" values="5|10|15|30|45|60" default="5"/>
     </category>
     <category label="30112">
         <setting id="setting_spielfilm" type="bool" label="30120" default="true"/>
