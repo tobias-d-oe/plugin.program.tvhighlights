@@ -97,13 +97,15 @@ Auch die Popup Nachricht beim Start von kodi und dem Content-Refresh kann aktivi
 Skintegration:
 ==============
 
-Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich:
+Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich (als Beispiel
+dient hier die Integration unter einer Linux-Distribution). Die zum Kopieren erforderlichen Dateien befinden
+sich im Ordner 'integration' des Plugins (plugin.program.tvhighlights):
 
+cd $HOME/.kodi/addons/plugin.program.tvhighlights/integration
 
 1. Kopieren des XML Files in den Confluence Skin Ordner (für mastermode:script-tvhighlights.xml; für splitmode:script-tvhighlights-splitmode-simple.xml)
 
   cp script-tvhighlights.xml /usr/share/kodi/addons/skin.confluence/720p/script-tvhighlights.xml
-
 
 2. Script als include am Skin "anmelden"
 Hierzu die Datei "/usr/share/kodi/addons/skin.confluence/720p/includes.xml" editieren, und unterhalb der Zeile:
@@ -163,7 +165,6 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 <!-- Ende neu eingefuegter Button -->
 
 --------------->8---------------
-
 
 
 
