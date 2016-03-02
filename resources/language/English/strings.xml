@@ -25,11 +25,31 @@
     <string id="30128">Refresh interval screen</string>
     <string id="30129">Problem with TV Digital Website, no content behind link</string>
 
-    <string id="30120">Feature film</string>
-    <string id="30121">Series</string>
+    <string id="30120">Featured Movie</string>
+    <string id="30121">TV Shows</string>
     <string id="30122">Sports</string>
     <string id="30123">Entertainment</string>
-    <string id="30124">Docu and Info</string>
+    <string id="30124">Documentation and Info</string>
     <string id="30125">Children</string>
+
+    <string id="30126">TV Highlights Genre</string>
+
+    <string id="30130">Refresh cycle of content must be higher than screen refresh (Recommended 120/5).</string>
+
+    <string id="30150">0 (off)</string>
+    <string id="30151">5 mins</string>
+    <string id="30152">10 mins</string>
+    <string id="30153">15 mins</string>
+    <string id="30154">30 mins</string>
+    <string id="30155">45 mins</string>
+    <string id="30156">60 mins</string>
+    <string id="30157">90 mins</string>
+    <string id="30158">120 mins</string>
+    <string id="30159">150 mins</string>
+    <string id="30160">180 mins</string>
+    <string id="30161">210 mins</string>
+    <string id="30162">240 mins</string>
+    <string id="30163">720 mins</string>
+    <string id="30164">1440 mins</string>
 </strings>
 

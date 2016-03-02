@@ -20,9 +20,9 @@
     <string id="30112">Splitmode</string>
     <string id="30113">Zeige SKY Sender</string>
     <string id="30114">Info bei Systemstart und Refresh</string>
-    <string id="30126">Zeige vergangene</string>
-    <string id="30127">Aktualisierungsinterval Content</string>
-    <string id="30128">Aktualisierungsinterval Screen</string>
+    <string id="30126">Zeige zurückliegende Sendungen an</string>
+    <string id="30127">Aktualisierungsintervall Inhalte</string>
+    <string id="30128">Aktualisierungsintervall Anzeige</string>
     <string id="30129">Problem mit TV Digital Website</string>
 
     <string id="30120">Spielfilm</string>
@@ -32,5 +32,24 @@
     <string id="30124">Doku und Info</string>
     <string id="30125">Kinder</string>
 
+    <string id="30126">TV Highlights Rubrik</string>
+
+    <string id="30130">Der Aktualisierungszyklus für den Inhalt muss größer sein als der Aktualisierungszyklus für die Anzeige (empfohlen 120/5).</string>
+
+    <string id="30150">0 (aus)</string>
+    <string id="30151">5 min</string>
+    <string id="30152">10 min</string>
+    <string id="30153">15 min</string>
+    <string id="30154">30 min</string>
+    <string id="30155">45 min</string>
+    <string id="30156">60 min</string>
+    <string id="30157">90 min</string>
+    <string id="30158">120 min</string>
+    <string id="30159">150 min</string>
+    <string id="30160">180 min</string>
+    <string id="30161">210 min</string>
+    <string id="30162">240 min</string>
+    <string id="30163">720 min</string>
+    <string id="30164">1440 min</string>
 </strings>
 
