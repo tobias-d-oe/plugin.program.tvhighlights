@@ -204,7 +204,7 @@ def refresh_tvdigital_splitmode_highlights(watchtype):
 
         debug("TV Highlights Refresh Home Screen %s" % (entry))
         json_object = json.loads(entry) 
-        xbmc.log("TV Highlights Entry=%s" % (json_object))
+        # xbmc.log("TV Highlights Entry=%s" % (json_object))
         if len(highlights) > 2:
             highlights = "%s, %s" % (highlights,entry)
         else:
@@ -283,7 +283,7 @@ def refresh_tvdigital_mastermode_highlights():
 
         debug("TV Highlights Refresh Home Screen %s" % (entry))
         json_object = json.loads(entry) 
-        xbmc.log("TV Highlights Entry=%s" % (json_object))
+        # xbmc.log("TV Highlights Entry=%s" % (json_object))
         if len(highlights) > 2:
             highlights = "%s, %s" % (highlights,entry)
         else:

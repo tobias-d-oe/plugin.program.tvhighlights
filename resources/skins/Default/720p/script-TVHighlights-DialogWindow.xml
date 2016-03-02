@@ -1,7 +1,8 @@
 <!-- plugin.program.tvhighlights - InfoWindow - START -->
 <!-- Confluence Skin adapted -->
 <window>
-        <defaultcontrol always="true">855655</defaultcontrol>
+        <!-- default close button is a trap if mouse support is disabled -->
+        <defaultcontrol always="true">10</defaultcontrol>
 	<include>dialogeffect</include>
 	<controls>
 		<control type="group" id="576757">
@@ -59,7 +60,7 @@
 	                </control>
 	
                 <control type="button" id="10">
-                        <description>Yes button</description>
+                        <description>Switchtimer button</description>
                         <left>305</left>
                         <top>635</top>
                         <width>200</width>
@@ -99,7 +100,6 @@
                                   <aligny>center</aligny>
                         </control>
 
-
                         <control type="image">
                                   <left>415</left>
                                   <top>170</top>
@@ -107,7 +107,6 @@
                                   <height>240</height>
 				  <texture border="15">$INFO[Window(Home).Property(TVHighlightsToday.Info.Picture)]</texture>
                         </control>
-
 
                         <control type="image">
                                 <description>Channel Logo</description>
@@ -118,7 +117,6 @@
                                 <texture>$INFO[Window(Home).Property(TVHighlightsToday.Info.Logo)]</texture>
                                 <aspectratio>scale</aspectratio>
                         </control>
-
 
 			<control type="label">
                                   <left>60</left>
@@ -132,7 +130,6 @@
                                   <align>left</align>
                                   <aligny>center</aligny>
                         </control>
-
 
 			<control type="label">
                                   <left>60</left>
@@ -159,7 +156,6 @@
                                   <scrollspeed>50</scrollspeed>
                         </control>
 
-
 			<control type="label">
                                   <left>60</left>
                                   <top>160</top>
@@ -172,7 +168,6 @@
                                   <align>left</align>
                                   <aligny>center</aligny>
                         </control>
-
 
                         <control type="label">
                                   <left>60</left>
@@ -225,11 +220,6 @@
                                   <aligny>center</aligny>
                         </control>
 
-
-
-
-
-
                         <control type="label">
                                   <left>260</left>
                                   <top>200</top>
@@ -281,7 +271,6 @@
                                   <aligny>center</aligny>
                         </control>
 
-
 			<control type="label">
                                   <left>60</left>
                                   <top>440</top>
@@ -294,8 +283,6 @@
                                   <align>left</align>
                                   <aligny>center</aligny>
                         </control>
-
-
 
                         <control type="textbox">
                                 <left>60</left>
@@ -311,8 +298,6 @@
    				<autoscroll delay="5000" time="5000" repeat="10000">!IsEmpty(Window(Home).Property(TVHighlightsToday.Info.Description))</autoscroll>
                                 <label>$INFO[Window(Home).Property(TVHighlightsToday.Info.Description)]</label>
                         </control>
-
-
 
                 </control>
 

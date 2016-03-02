@@ -103,9 +103,10 @@ sich im Ordner 'integration' des Plugins (plugin.program.tvhighlights):
 
 cd $HOME/.kodi/addons/plugin.program.tvhighlights/integration
 
-1. Kopieren des XML Files in den Confluence Skin Ordner (für mastermode:script-tvhighlights.xml; für splitmode:script-tvhighlights-splitmode-simple.xml)
+1. Kopieren des XML Files in den Confluence Skin Ordner
+   (für mastermode:script-tvhighlights.xml; für splitmode:script-tvhighlights-splitmode-simple.xml)
 
-  cp script-tvhighlights.xml /usr/share/kodi/addons/skin.confluence/720p/script-tvhighlights.xml
+  cp *.xml /usr/share/kodi/addons/skin.confluence/720p/
 
 2. Script als include am Skin "anmelden"
 Hierzu die Datei "/usr/share/kodi/addons/skin.confluence/720p/includes.xml" editieren, und unterhalb der Zeile:
@@ -159,7 +160,7 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 <!-- Begin neu eingefuegter Button -->
                 <control type="button" id="97149">
                         <include>ButtonHomeSubCommonValues</include>
-                        <label>TV Highlights Rubrik</label>
+                        <label>$ADDON[plugin.program.tvhighlights  30126]</label>
                         <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick>
                 </control>
 <!-- Ende neu eingefuegter Button -->

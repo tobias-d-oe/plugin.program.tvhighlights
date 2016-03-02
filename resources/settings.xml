@@ -4,8 +4,8 @@
         <setting id="mastermode" type="bool" label="30111" default="true"/>
         <setting id="enableinfo" type="bool" label="30114" default="true"/>
         <setting id="showtimeframe" type="bool" label="30126" default="true"/>
-        <setting id="mdelay" type="labelenum" label="30127" values="0|30|60|90|120|150|180|210|240|720|1440" default="180"/>
-        <setting id="screenrefresh" type="labelenum" label="30128" values="5|10|15|30|45|60" default="5"/>
+        <setting id="mdelay" type="labelenum" label="30127" lvalues="30150|30154|30156|30157|30158|30159|30160|30161|30162|30163|30164" default="30160"/>
+        <setting id="screenrefresh" type="labelenum" label="30128" lvalues="30151|30152|30153|30154|30155|30156" default="30151"/>
     </category>
     <category label="30112">
         <setting id="setting_spielfilm" type="bool" label="30120" default="true"/>
@@ -16,7 +16,6 @@
         <setting id="setting_kinder" type="bool" label="30125" default="false"/>
     </category>
     <category label="30111">
-        <setting id="mastertype" type="labelenum" label="30105" default="spielfilm" values="spielfilm|serie|sport|unterhaltung|doku-und-info|kinder" />
+        <setting id="mastertype" type="labelenum" label="30105" lvalues="30120|30121|30122|30123|30124|30125" default="30120"/>
     </category>
 </settings>
-

@@ -27,102 +27,117 @@
 #     CHANGELOG:  (02.09.2015) TDOe - First Publishing
 ###########################################################################
 
-import os,sys,time,xbmc,xbmcgui,xbmcaddon
+import os,sys,time,re,xbmc,xbmcgui,xbmcaddon
 
-icon = xbmc.translatePath("special://home/addons/plugin.program.tvhighlights/icon.png")
-#mdelay = 14400 # 4h
-#mdelay = 120 # 2m
-mdelay = 0
-mdelay2 = 0
+__addon__ = xbmcaddon.Addon()
+__addonID__ = __addon__.getAddonInfo('id')
+__addonname__ = __addon__.getAddonInfo('name')
+__version__ = __addon__.getAddonInfo('version')
+__path__ = __addon__.getAddonInfo('path')
+__LS__ = __addon__.getLocalizedString
+__icon__ = xbmc.translatePath(os.path.join(__path__, 'icon.png'))
 
-addon       = xbmcaddon.Addon()
-enableinfo  = addon.getSetting('enableinfo')
-translation = addon.getLocalizedString
-notifyheader= str(translation(30010))
-notifytxt   = str(translation(30106))
-screenrefresh = int(addon.getSetting('screenrefresh'))
-refreshcontent = int(addon.getSetting('mdelay'))/int(screenrefresh)
+OSD = xbmcgui.Dialog()
 
-xbmc.log("TV Highlights Grabber - TV Digital: Contentrefresh (%s), Screenrefresh (%s)" % (addon.getSetting('mdelay'),addon.getSetting('screenrefresh')))
+# Helpers #
 
-if int(addon.getSetting('mdelay')) == 0:
-    xbmc.log("Do not start TV Highlights Service, content refresh is 0")
+def notifyOSD(header, message, icon=xbmcgui.NOTIFICATION_INFO, disp=4000, enabled=True):
+    if enabled:
+        OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, disp)
+
+def writeLog(message, level=xbmc.LOGNOTICE):
+        xbmc.log('[%s %s]: %s' % (__addonID__, __version__,  message.encode('utf-8')), level)
+
+# End Helpers #
+
+_mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group())
+_screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group())
+
+writeLog('Content refresh: %s mins, screen refresh: %s mins' % (_mdelay, _screenrefresh))
+
+if _mdelay == 0:
+    writeLog('Don\'t start Service, content refresh is 0', level=xbmc.LOGERROR)
     sys.exit()
 
-if int(addon.getSetting('screenrefresh')) >= int(addon.getSetting('mdelay')):
-    xbmc.executebuiltin('XBMC.Notification('+notifyheader+', "Contentrefresh has to be higher than Screenrefresh. (Recommended 120/5)" ,10000,'+icon+')')
-    xbmc.log("Do not start TV Highlights Service, content refresh (%s) is lower than screen refresh (%s)" % (refreshcontent,screenrefresh))
+if _screenrefresh >= _mdelay:
+    notifyOSD(__LS__(30010), __LS__(30130), icon=__icon__, disp=10000)
+    writeLog('Don\'t start Service, content refresh is lower than screen refresh', level=xbmc.LOGERROR)
     sys.exit()
 
-
-
-class MyMonitor( xbmc.Monitor ):
-    def __init__( self, *args, **kwargs ):
-        xbmc.Monitor.__init__( self )
+class MyMonitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs ):
+        xbmc.Monitor.__init__(self)
+        self.settingsChanged = False
 
     def onSettingsChanged( self ):
-        settings_initialize()
+        self.settingsChanged = True
 
+class Starter():
 
+    def __init__(self):
+        self.mastermode = None
+        self.enableinfo = None
+        self.showtimeframe = None
+        self.mdelay = 0
+        self.screenrefresh = 0
 
+    def getSettings(self):
+        self.mastermode = True if __addon__.getSetting('mastermode').upper() == 'TRUE' else False
+        self.enableinfo = True if __addon__.getSetting('enableinfo').upper() == 'TRUE' else False
+        self.showtimeframe = True if __addon__.getSetting('showtimeframe').upper() == 'TRUE' else False
+        self.mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group()) * 60
+        self.screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group()) * 60
+        self.refreshcontent = self.mdelay/self.screenrefresh
 
+        writeLog('Settings (re)loaded')
+        writeLog('Mastermode:               %s' % (self.mastermode))
+        writeLog('Show notifications:       %s' % (self.enableinfo))
+        writeLog('Show timeframe:           %s' % (self.showtimeframe))
+        writeLog('Refresh interval content: %s secs' % (self.mdelay))
+        writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh))
+        writeLog('Refreshing content ratio: %s' % (self.refreshcontent))
 
-def settings_initialize():
-    global mdelay
-    global mdelay2
-    mdelay = int(addon.getSetting('mdelay'))*int("60")
-    xbmc.log("TVHighlights: mdelay from settings=%s" % (mdelay))
-    mdelay2 = int(screenrefresh)*int("60")
-    xbmc.log("Refresh Interval content: %s" % (mdelay))
-    xbmc.log("Refresh Interval screen : %s" % (mdelay2))
-    xbmc.log("Refresh screen : %s" % (screenrefresh))
-    xbmc.log("Refresh content : %s" % (refreshcontent))
-    xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_mode")')
-    if addon.getSetting('mastermode') == 'true':
-        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_master_elements")')
-    else:
-        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_split_elements")')
-    xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')    
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_mode")')
 
+        if self.mastermode:
+            xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_master_elements")')
+        else:
+            xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_split_elements")')
 
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
 
+    def start(self):
+        writeLog('Starting %s V.%s' % (__addonname__, __version__))
+        notifyOSD(__LS__(30010), __LS__(30106), __icon__, enabled=self.enableinfo)
+        self.getSettings()
 
+        ## Thoughts: refresh = 5m; refresh-content=120 => i-max=120/5;
 
-xbmc.log("Start TV Highlights Service")
-if enableinfo == 'true':
-    xbmc.executebuiltin('XBMC.Notification('+notifyheader+', '+notifytxt+' ,4000,'+icon+')')
-
-settings_initialize()
-
-
-## Thoughts: refresh = 5m; refresh-content=120 => i-max=120/5;
-counter = 0
+        counter = 0
+        monitor = MyMonitor()
+        while not monitor.abortRequested():
+            if monitor.settingsChanged:
+                self.getSettings()
+                monitor.settingsChanged = False
+            if monitor.waitForAbort(self.screenrefresh):
+                break
+            counter += 1
+            if counter >= self.refreshcontent:
+                writeLog('Refreshing TVHighlights @%s' % time.time(), level=xbmc.LOGDEBUG)
+                notifyOSD(__LS__(30010), __LS__(30018), __icon__, enabled=self.enableinfo)
+                xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
+                counter = 0
+            else:
+                notifyOSD(__LS__(30010), __LS__(30108), __icon__, enabled=self.enableinfo)
+                if not self.showtimeframe:
+                    writeLog('Refresh content on home screen')
+                    if self.mastermode:
+                        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_mastermode")')
+                    else:
+                        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_splitmode")')
 
 if __name__ == '__main__':
-    monitor = MyMonitor()
-    while not monitor.abortRequested():
-        # Sleep/wait for abort for $mdelay seconds
-        #if monitor.waitForAbort(float(mdelay)):
-        if monitor.waitForAbort(float(mdelay2)):
-            # Abort was requested while waiting. We should exit
-            break
-        counter+=1
-        if int(counter) == int(refreshcontent):
-            xbmc.log("Refreshing TVHighlights! %s" % time.time(), level=xbmc.LOGDEBUG)
-            if enableinfo == 'true':
-                notifytxt = str(translation(30108))
-                xbmc.executebuiltin('XBMC.Notification('+notifyheader+', '+notifytxt+' ,4000,'+icon+')')
-            xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
-            counter = 0
-        else:
-            if enableinfo == 'true':
-                notifytxt = str(translation(30108))
-                xbmc.executebuiltin('XBMC.Notification('+notifyheader+', "Refresh Screen" ,4000,'+icon+')')
-
-            if addon.getSetting('showtimeframe') == 'false':
-                xbmc.log("TV Highlights doing contentrefresh on home screen")
-                if addon.getSetting('mastermode') == 'true':
-                    xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_mastermode")')
-                else:
-                    xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_splitmode")')
+    starter = Starter()
+    starter.start()
+    del starter
 
