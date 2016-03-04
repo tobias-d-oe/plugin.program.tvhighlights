@@ -55,11 +55,18 @@ ChannelTranslateFile = xbmc.translatePath(os.path.join('special://home/addons', 
 with open(ChannelTranslateFile, 'r') as transfile:
     ChannelTranslate=transfile.read().rstrip('\n')
 
-TVDigitalWatchtypes = ['spielfilm', 'sport', 'serie', 'unterhaltung', 'doku-und-info', 'kinder'] 
+TVDigitalWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku', 'kinder']
 
 mastermode    = __addon__.getSetting('mastermode')
 mastertype    = __addon__.getSetting('mastertype')
 showtimeframe = __addon__.getSetting('showtimeframe')
+
+def getsplitmodes():
+    splitmodes = []
+    for watchtype in TVDigitalWatchtypes:
+        if __addon__.getSetting(watchtype).upper() == 'TRUE': splitmodes.append(watchtype)
+    return splitmodes
+
 
 ##########################################################################################################################
 ##
@@ -190,24 +197,42 @@ def clearProperties(start, watchtype):
             WINDOW.clearProperty( "TV%sHighlightsToday.%s.%s" %(watchtype, i, property))
 
 ##########################################################################################################################
-## refresh content timebased in splitmode -  watchtype is one of spielfilm,sport,serie,unterhaltung,doku-und-info,kinder
+## refresh content timebased in splitmode -  watchtype is one of spielfilm,sport,serie,unterhaltung,doku,kinder
 ##########################################################################################################################
 def refresh_tvdigital_splitmode_highlights(watchtype):
     highlights = '['
-    json_data = json.loads( '{}' )
+    # json_data = json.loads( '{}' )
     # read Properties from Home Screen
     for i in range(1, 14, 1):
         blub = WINDOW.getProperty("TV%sHighlightsToday.%s.Title" %(watchtype,i)).decode("utf8").rstrip()
         debug("TV Highlights Refresh Home Screen %s" % (i))
         debug("TV Highlights Refresh Home Screen %s" % (blub))
-        entry     = "{ \"id\": \"%s\", \"title\": \"%s\", \"thumb\": \"%s\", \"time\": \"%s\", \"date\": \"%s\", \"channel\": \"%s\", \"pvrid\": \"%s\", \"icon\": \"%s\", \"logo\": \"%s\", \"genre\": \"%s\", \"comment\": \"%s\", \"year\": \"%s\", \"duration\": \"%s\", \"extrainfos\": \"%s\", \"watchtype\": \"%s\" }" % (i, WINDOW.getProperty("TV%sHighlightsToday.%s.Title" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Thumb" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Time" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Date" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Channel" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.PVRID" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Icon" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Logo" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Genre" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Comment" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Year" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Duration" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.Extrainfos" %(watchtype,i)).decode("utf8").rstrip(), WINDOW.getProperty("TV%sHighlightsToday.%s.WatchType" %(watchtype,i)).decode("utf8").rstrip()) 
+
+        entry = {
+                "id": i,
+                "title": WINDOW.getProperty("TV%sHighlightsToday.%s.Title" % (watchtype, i)).decode("utf8"),
+                "thumb": WINDOW.getProperty("TV%sHighlightsToday.%s.Thumb" % (watchtype, i)).decode("utf8"),
+                "time": WINDOW.getProperty("TV%sHighlightsToday.%s.Time" % (watchtype, i)).decode("utf8"),
+                "date": WINDOW.getProperty("TV%sHighlightsToday.%s.Date" % (watchtype, i)).decode("utf8"),
+                "channel": WINDOW.getProperty("TV%sHighlightsToday.%s.Channel" % (watchtype, i)).decode("utf8"),
+                "pvrid": WINDOW.getProperty("TV%sHighlightsToday.%s.PVRID" % (watchtype, i)).decode("utf8"),
+                "icon": WINDOW.getProperty("TV%sHighlightsToday.%s.Icon" % (watchtype, i)).decode("utf8"),
+                "logo": WINDOW.getProperty("TV%sHighlightsToday.%s.Logo" % (watchtype, i)).decode("utf8"),
+                "genre": WINDOW.getProperty("TV%sHighlightsToday.%s.Genre" % (watchtype, i)).decode("utf8"),
+                "comment": WINDOW.getProperty("TV%sHighlightsToday.%s.Comment" % (watchtype, i)).decode("utf8"),
+                "year": WINDOW.getProperty("TV%sHighlightsToday.%s.Year" % (watchtype, i)).decode("utf8"),
+                "duration": WINDOW.getProperty("TV%sHighlightsToday.%s.Duration" % (watchtype, i)).decode("utf8"),
+                "extrainfos": WINDOW.getProperty("TV%sHighlightsToday.%s.Extrainfos" % (watchtype, i)).decode("utf8"),
+                "watchtype": WINDOW.getProperty("TV%sHighlightsToday.%s.WatchType" % (watchtype, i)).decode("utf8")
+                }
 
         debug("TV Highlights Refresh Home Screen %s" % (entry))
-        json_object = json.loads(entry)
+        #json_object = json.loads(entry)
+        json_object = json.loads('%s' % (entry))
         if len(highlights) > 2:
-            highlights = "%s, %s" % (highlights,entry)
+            highlights = "%s, %s" % (highlights, entry)
         else:
-            highlights = "%s %s" % (highlights,entry)
+            highlights = "%s %s" % (highlights, entry)
 
     highlights = "%s ]" % (highlights)
     debug("TV Highlights: highlights= %s" % (highlights))
@@ -231,6 +256,7 @@ def refresh_tvdigital_splitmode_highlights(watchtype):
             continue
         else:
             debug("Highlighttime is in future: %s - %s" % (hts, curts))
+
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Title" %(watchtype,i), jd["title"] )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Thumb" %(watchtype,i), jd["thumb"] )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Time" %(watchtype,i), jd["time"] )
@@ -254,16 +280,34 @@ def refresh_tvdigital_splitmode_highlights(watchtype):
 ##########################################################################################################################
 def refresh_tvdigital_mastermode_highlights():
     highlights = '['
-    json_data = json.loads( '{}' )
+    # json_data = json.loads( '{}' )
     # read Properties from Home Screen
     for i in range(1, 14, 1):
         blub = WINDOW.getProperty("TVHighlightsToday.%s.Title" %(i)).decode("utf8").rstrip()
         debug("TV Highlights Refresh Home Screen %s" % (i))
         debug("TV Highlights Refresh Home Screen %s" % (blub))
-        entry     = "{ \"id\": \"%s\", \"title\": \"%s\", \"thumb\": \"%s\", \"time\": \"%s\", \"date\": \"%s\", \"channel\": \"%s\", \"pvrid\": \"%s\", \"icon\": \"%s\", \"logo\": \"%s\", \"genre\": \"%s\", \"comment\": \"%s\", \"year\": \"%s\", \"duration\": \"%s\", \"extrainfos\": \"%s\", \"watchtype\": \"%s\" }" % (i, WINDOW.getProperty("TVHighlightsToday.%s.Title" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Thumb" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Time" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Date" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Channel" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.PVRID" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Icon" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Logo" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Genre" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Comment" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Year" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Duration" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.Extrainfos" %(i)).decode("utf8").rstrip(), WINDOW.getProperty("TVHighlightsToday.%s.WatchType" %(i)).decode("utf8").rstrip()) 
+
+        watchtype = ''
+        entry = {
+                "id": i,
+                "title": WINDOW.getProperty("TV%sHighlightsToday.%s.Title" % (watchtype, i)).decode("utf8"),
+                "thumb": WINDOW.getProperty("TV%sHighlightsToday.%s.Thumb" % (watchtype, i)).decode("utf8"),
+                "time": WINDOW.getProperty("TV%sHighlightsToday.%s.Time" % (watchtype, i)).decode("utf8"),
+                "date": WINDOW.getProperty("TV%sHighlightsToday.%s.Date" % (watchtype, i)).decode("utf8"),
+                "channel": WINDOW.getProperty("TV%sHighlightsToday.%s.Channel" % (watchtype, i)).decode("utf8"),
+                "pvrid": WINDOW.getProperty("TV%sHighlightsToday.%s.PVRID" % (watchtype, i)).decode("utf8"),
+                "icon": WINDOW.getProperty("TV%sHighlightsToday.%s.Icon" % (watchtype, i)).decode("utf8"),
+                "logo": WINDOW.getProperty("TV%sHighlightsToday.%s.Logo" % (watchtype, i)).decode("utf8"),
+                "genre": WINDOW.getProperty("TV%sHighlightsToday.%s.Genre" % (watchtype, i)).decode("utf8"),
+                "comment": WINDOW.getProperty("TV%sHighlightsToday.%s.Comment" % (watchtype, i)).decode("utf8"),
+                "year": WINDOW.getProperty("TV%sHighlightsToday.%s.Year" % (watchtype, i)).decode("utf8"),
+                "duration": WINDOW.getProperty("TV%sHighlightsToday.%s.Duration" % (watchtype, i)).decode("utf8"),
+                "extrainfos": WINDOW.getProperty("TV%sHighlightsToday.%s.Extrainfos" % (watchtype, i)).decode("utf8"),
+                "watchtype": WINDOW.getProperty("TV%sHighlightsToday.%s.WatchType" % (watchtype, i)).decode("utf8")
+                }
 
         debug("TV Highlights Refresh Home Screen %s" % (entry))
-        json_object = json.loads(entry) 
+        json_object = json.loads('%s' % (entry))
         # xbmc.log("TV Highlights Entry=%s" % (json_object))
         if len(highlights) > 2:
             highlights = "%s, %s" % (highlights,entry)
@@ -421,7 +465,7 @@ def get_tvdigital_mastermode_highlights(mastertype):
         thumbNr = thumbNr + 1
     
 ##########################################################################################################################
-## Clear possible existing property values. watchtype is one of spielfilm,sport,serie,unterhaltung,doku-und-info,kinder    
+## Clear possible existing property values. watchtype is one of spielfilm,sport,serie,unterhaltung,doku,kinder
 ##########################################################################################################################
 def clear_tvdigital_watchtype_highlights(watchtype):
     debug("Clear Props for "+watchtype)
@@ -429,7 +473,7 @@ def clear_tvdigital_watchtype_highlights(watchtype):
 
 ##########################################################################################################################
 ## Retrieve tvhighlights for a choosen watchtype. Set Home properties. 
-## Possible watchtype types are spielfilm,sport,serie,unterhaltung,doku-und-info,kinder
+## Possible watchtype types are spielfilm,sport,serie,unterhaltung,doku,kinder
 ##########################################################################################################################
 def get_tvdigital_watchtype_highlights(watchtype):
     debug("Start retrive watchtype "+watchtype)
@@ -947,33 +991,17 @@ elif methode=='refresh_mastermode':
 
 elif methode=='refresh_splitmode':
         debug('Methode: refresh_splitmode '+watchtype)
-        setting_spielfilm     = __addon__.getSetting('setting_spielfilm')
-        setting_sport         = __addon__.getSetting('setting_sport')
-        setting_unterhaltung  = __addon__.getSetting('setting_unterhaltung')
-        setting_serie         = __addon__.getSetting('setting_serie')
-        setting_kinder        = __addon__.getSetting('setting_kinder')
-        setting_doku          = __addon__.getSetting('setting_doku')
-        if setting_spielfilm == 'true':
-            refresh_tvdigital_splitmode_highlights('spielfilm')
-        if setting_sport =='true':
-            refresh_tvdigital_splitmode_highlights('sport')
-        if setting_unterhaltung == 'true':
-            refresh_tvdigital_splitmode_highlights('unterhaltung')
-        if setting_serie == 'true':
-            refresh_tvdigital_splitmode_highlights('serie')
-        if setting_kinder == 'true':
-            refresh_tvdigital_splitmode_highlights('kinder')
-        if setting_doku == 'true':
-            refresh_tvdigital_splitmode_highlights('doku')
+        for mode in getsplitmodes():
+            refresh_tvdigital_splitmode_highlights(mode)
 
 elif methode=='get_split_elements':
         debug('Methode: get Split Elements')
-        setting_spielfilm     = __addon__.getSetting('setting_spielfilm')
-        setting_sport         = __addon__.getSetting('setting_sport')
-        setting_unterhaltung  = __addon__.getSetting('setting_unterhaltung')
-        setting_serie         = __addon__.getSetting('setting_serie')
-        setting_kinder        = __addon__.getSetting('setting_kinder')
-        setting_doku          = __addon__.getSetting('setting_doku')
+        setting_spielfilm     = __addon__.getSetting('spielfilm')
+        setting_sport         = __addon__.getSetting('sport')
+        setting_unterhaltung  = __addon__.getSetting('unterhaltung')
+        setting_serie         = __addon__.getSetting('serie')
+        setting_kinder        = __addon__.getSetting('kinder')
+        setting_doku          = __addon__.getSetting('doku')
         WINDOW.setProperty( "TVHighlightsToday.Splitmode.Spielfilm", str(setting_spielfilm) )
         WINDOW.setProperty( "TVHighlightsToday.Splitmode.Sport", str(setting_sport) )
         WINDOW.setProperty( "TVHighlightsToday.Splitmode.Unterhaltung", str(setting_unterhaltung) )
@@ -991,20 +1019,8 @@ elif methode=='show_select_dialog':
     ret = dialog.select(str(__LS__(30011)), [str(__LS__(30120)), str(__LS__(30121)), str(__LS__(30122)), str(__LS__(30123)), str(__LS__(30124)), str(__LS__(30125))])
     debug(ret)
     clear_tvdigital_mastermode_highlights()
-    if ret==0:
-        get_tvdigital_mastermode_highlights('spielfilm')
-    elif ret==1:
-        get_tvdigital_mastermode_highlights('serie')
-    elif ret==2:
-        get_tvdigital_mastermode_highlights('sport')
-    elif ret==3:
-        get_tvdigital_mastermode_highlights('unterhaltung')
-    elif ret==4:
-        get_tvdigital_mastermode_highlights('doku-und-info')
-    elif ret==5:
-        get_tvdigital_mastermode_highlights('kinder')
-    # else:
-    #    get_tvdigital_mastermode_highlights('spielfilm')
+    if ret >= 0:
+        get_tvdigital_mastermode_highlights(TVDigitalWatchtypes[ret])
 
 elif methode=='set_mastermode':
     __addon__.setSetting('mastermode', 'true')
@@ -1014,12 +1030,12 @@ elif methode=='set_mastermode':
 elif methode=='set_splitmode':
     __addon__.setSetting('mastermode', 'false')
     WINDOW.setProperty( "TVHighlightsToday.Mode", "splitmode" )
-    setting_spielfilm     = __addon__.getSetting('setting_spielfilm')
-    setting_sport         = __addon__.getSetting('setting_sport')
-    setting_unterhaltung  = __addon__.getSetting('setting_unterhaltung')
-    setting_serie         = __addon__.getSetting('setting_serie')
-    setting_kinder        = __addon__.getSetting('setting_kinder')
-    setting_doku          = __addon__.getSetting('setting_doku')
+    setting_spielfilm     = __addon__.getSetting('spielfilm')
+    setting_sport         = __addon__.getSetting('sport')
+    setting_unterhaltung  = __addon__.getSetting('unterhaltung')
+    setting_serie         = __addon__.getSetting('serie')
+    setting_kinder        = __addon__.getSetting('kinder')
+    setting_doku          = __addon__.getSetting('doku')
     WINDOW.setProperty( "TVHighlightsToday.Splitmode.Spielfilm", str(setting_spielfilm) )
     WINDOW.setProperty( "TVHighlightsToday.Splitmode.Sport", str(setting_sport) )
     WINDOW.setProperty( "TVHighlightsToday.Splitmode.Unterhaltung", str(setting_unterhaltung) )
@@ -1038,36 +1054,5 @@ elif methode=='settings' or methode==None or not (watchtype in TVDigitalWatchtyp
             clear_tvdigital_mastermode_highlights()
             get_tvdigital_mastermode_highlights(mastertype)
         else:
-            setting_spielfilm     = __addon__.getSetting('setting_spielfilm')
-            setting_sport         = __addon__.getSetting('setting_sport')
-            setting_unterhaltung  = __addon__.getSetting('setting_unterhaltung')
-            setting_serie         = __addon__.getSetting('setting_serie')
-            setting_kinder        = __addon__.getSetting('setting_kinder')
-            setting_doku          = __addon__.getSetting('setting_doku')
-
-            debug("setting_spielfilm"+setting_spielfilm)
-            debug("setting_sport"+setting_sport)
-            debug("setting_unterhaltung"+setting_unterhaltung)
-            debug("setting_serie"+setting_serie)
-            debug("setting_kinder"+setting_kinder)
-            debug("setting_doku"+setting_doku)
-
-            if setting_spielfilm=='true':
-                clear_tvdigital_watchtype_highlights('spielfilm')
-                get_tvdigital_watchtype_highlights('spielfilm')
-            if setting_serie=='true':
-                clear_tvdigital_watchtype_highlights('serie')
-                get_tvdigital_watchtype_highlights('serie')
-            if setting_doku=='true':
-                clear_tvdigital_watchtype_highlights('doku-und-info')
-                get_tvdigital_watchtype_highlights('doku-und-info')
-            if setting_unterhaltung=='true':
-                clear_tvdigital_watchtype_highlights('unterhaltung')
-                get_tvdigital_watchtype_highlights('unterhaltung')
-            if setting_kinder=='true':
-                clear_tvdigital_watchtype_highlights('kinder')
-                get_tvdigital_watchtype_highlights('kinder')
-            if setting_sport=='true':
-                clear_tvdigital_watchtype_highlights('sport')
-                get_tvdigital_watchtype_highlights('sport')
-    
+            for mode in getsplitmodes():
+                get_tvdigital_watchtype_highlights(mode)

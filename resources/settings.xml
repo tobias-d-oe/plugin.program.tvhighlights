@@ -8,12 +8,12 @@
         <setting id="screenrefresh" type="labelenum" label="30128" lvalues="30151|30152|30153|30154|30155|30156" default="30151"/>
     </category>
     <category label="30112">
-        <setting id="setting_spielfilm" type="bool" label="30120" default="true"/>
-        <setting id="setting_serie" type="bool" label="30121" default="false"/>
-        <setting id="setting_sport" type="bool" label="30122" default="false"/>
-        <setting id="setting_unterhaltung" type="bool" label="30123" default="false"/>
-        <setting id="setting_doku" type="bool" label="30124" default="false"/>
-        <setting id="setting_kinder" type="bool" label="30125" default="false"/>
+        <setting id="spielfilm" type="bool" label="30120" default="true"/>
+        <setting id="serie" type="bool" label="30121" default="false"/>
+        <setting id="sport" type="bool" label="30122" default="false"/>
+        <setting id="unterhaltung" type="bool" label="30123" default="false"/>
+        <setting id="doku" type="bool" label="30124" default="false"/>
+        <setting id="kinder" type="bool" label="30125" default="false"/>
     </category>
     <category label="30111">
         <setting id="mastertype" type="labelenum" label="30105" lvalues="30120|30121|30122|30123|30124|30125" default="30120"/>
