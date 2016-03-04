@@ -160,7 +160,7 @@ direkt im Anschluss den zusätzlichen Button hinzufügen:
 <!-- Begin neu eingefuegter Button -->
                 <control type="button" id="97149">
                         <include>ButtonHomeSubCommonValues</include>
-                        <label>$ADDON[plugin.program.tvhighlights  30126]</label>
+                        <label>$ADDON[plugin.program.tvhighlights 30011]</label>
                         <onclick>RunScript(plugin.program.tvhighlights,"?methode=show_select_dialog")</onclick>
                 </control>
 <!-- Ende neu eingefuegter Button -->
