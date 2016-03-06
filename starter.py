@@ -53,7 +53,7 @@ def writeLog(message, level=xbmc.LOGNOTICE):
 _mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group())
 _screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group())
 
-writeLog('Content refresh: %s mins, screen refresh: %s mins' % (_mdelay, _screenrefresh))
+writeLog('Content refresh: %s mins, screen refresh: %s mins' % (_mdelay, _screenrefresh), level=xbmc.LOGDEBUG)
 
 if _mdelay == 0:
     writeLog('Don\'t start Service, content refresh is 0', level=xbmc.LOGERROR)
@@ -130,10 +130,11 @@ class Starter():
             else:
                 notifyOSD(__LS__(30010), __LS__(30108), __icon__, enabled=self.enableinfo)
                 if not self.showtimeframe:
-                    writeLog('Refresh content on home screen')
                     if self.mastermode:
+                        writeLog('Refresh content on home screen in mastermode')
                         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_mastermode")')
                     else:
+                        writeLog('Refresh content on home screen in splitmode')
                         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_splitmode")')
 
 if __name__ == '__main__':

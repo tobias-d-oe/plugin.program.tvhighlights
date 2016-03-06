@@ -14,6 +14,7 @@
         <setting id="unterhaltung" type="bool" label="30123" default="false"/>
         <setting id="doku" type="bool" label="30124" default="false"/>
         <setting id="kinder" type="bool" label="30125" default="false"/>
+        <setting id="prefer_hd" type="bool" label="30113" default="true" />
     </category>
     <category label="30111">
         <setting id="mastertype" type="labelenum" label="30105" lvalues="30120|30121|30122|30123|30124|30125" default="30120"/>
