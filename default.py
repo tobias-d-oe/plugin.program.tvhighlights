@@ -327,7 +327,7 @@ def get_tvd_highlights(watchtype):
         writeLog('Popup:          %s' % (data.detailURL), level=xbmc.LOGDEBUG)
         writeLog('Watchtype:      %s' % (watchtype), level=xbmc.LOGDEBUG)
 
-        watchtype = ''
+        # watchtype = ''
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Title" %(watchtype,i), data.title )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Thumb" %(watchtype,i), data.picture )
         WINDOW.setProperty( "TV%sHighlightsToday.%s.Time" %(watchtype,i), data.starttime )
