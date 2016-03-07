@@ -13,7 +13,6 @@
 
 import urllib
 import urllib2
-import re
 import os
 import sys
 import xbmc
@@ -52,7 +51,7 @@ ChannelTranslateFile = xbmc.translatePath(os.path.join('special://home/addons', 
 with open(ChannelTranslateFile, 'r') as transfile:
     ChannelTranslate=transfile.read().rstrip('\n')
 
-TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku', 'kinder']
+TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku-und-info', 'kinder']
 properties = ['Title', 'Thumb', 'Time', 'Date', 'Channel', 'PVRID', 'Icon', 'Logo', 'Genre', 'Comment', 'Year', 'Duration', 'Extrainfos', 'WatchType']
 infoprops = ['Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
 
@@ -89,8 +88,21 @@ def parameters_string_to_dict(parameters):
                 paramDict[paramSplits[0]] = paramSplits[1]
     return paramDict
 
+# get used dateformat of kodi
+
+def getDateFormat():
+    df = xbmc.getRegion('dateshort')
+    tf = xbmc.getRegion('time').split(':')
+
+    try:
+        # time format is 12h with am/pm
+        return df + ' ' + tf[0][0:2] + ':' + tf[1] + ' ' + tf[2].split()[1]
+    except IndexError:
+        # time format is 24h with or w/o leading zero
+        return df + ' ' + tf[0][0:2] + ':' + tf[1]
+
 # convert datetime string to timestamp with workaround python bug (http://bugs.python.org/issue7980) - Thanks to BJ1
- 
+
 def date2timeStamp(date, format):
     writeLog("Date date2timeStamp : %s" % (date), level=xbmc.LOGDEBUG)
     writeLog("Format date2timeStamp : %s" % (format), level=xbmc.LOGDEBUG)
@@ -129,7 +141,7 @@ def channelName2channelId(channelname):
 
             # priorize HD Channel
             if channelname+" HD".lower() in channels['label'].lower(): 
-                writeLog("TVHighlights found  HD priorized channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
+                writeLog("TVHighlights found HD priorized channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
             if channelname.lower() in channels['label'].lower(): 
                 writeLog("TVHighlights found  channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
@@ -217,7 +229,7 @@ def readProperties(watchtype=''):
 
 # refresh content timebased in splitmode -  watchtype is one of spielfilm, sport, serie, unterhaltung, doku, kinder
 
-def refresh_tvdigital_splitmode_highlights(watchtype):
+def refresh_tvdigital_splitmode_highlights(watchtype=''):
 
     highlights = readProperties(watchtype)
     clearProperties(watchtype)
@@ -261,243 +273,74 @@ def refresh_tvdigital_splitmode_highlights(watchtype):
 # refresh content timebased in mastermode
 
 def refresh_tvdigital_mastermode_highlights():
-    highlights = readProperties()
-    clearProperties()
-
-    i = 1
-    for highlight in highlights:
-        writeLog("Processing title: %s" % (highlight["title"]), level=xbmc.LOGDEBUG)
-
-        if len(highlight["time"]) < 4:
-            writeLog('TV Highlights: Empty Time...', level=xbmc.LOGDEBUG)
-            continue
-        else:
-            writeLog("Highlightstime: %s" % (highlight["time"]), level=xbmc.LOGDEBUG)
-        now = datetime.datetime.now()
-        htsstr = '%s %s %s %s:00' % (now.year, now.month, now.day, highlight["time"])
-        hts = date2timeStamp(htsstr, "%Y %m %d %H:%M:%S")
-
-        curts = time.time()
-        if int(hts) < int(curts):
-            writeLog('Remove outdated entry', level=xbmc.LOGDEBUG)
-            continue
-        else:
-            writeLog("Highlighttime is in future: %s - %s" % (hts, curts), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty("TVHighlightsToday.%s.Title" % (i), highlight["title"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Thumb" % (i), highlight["thumb"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Time" % (i), highlight["time"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Date" % (i), highlight["date"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Channel" % (i), highlight["channel"])
-        WINDOW.setProperty("TVHighlightsToday.%s.PVRID" % (i), highlight["pvrid"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Icon" % (i), highlight["icon"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Logo" % (i), highlight["logo"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Genre" % (i), highlight["genre"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Comment" % (i), highlight["comment"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Year" % (i), highlight["year"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Duration" % (i), highlight["duration"])
-        WINDOW.setProperty("TVHighlightsToday.%s.Extrainfos" % (i), highlight["extrainfos"])
-        WINDOW.setProperty("TVHighlightsToday.%s.WatchType" % (i), highlight["watchtype"])
-        i += 1
+    refresh_tvdigital_splitmode_highlights(mastermode)
 
 # retrieve tvhighlights (mastermode)
 
-def get_tvdigital_mastermode_highlights(mastertype):
-    url="http://www.tvdigital.de/tv-tipps/heute/"+mastertype+"/"
-    spl = getUnicodePage(url, container='class="highlight-container"')
-    writeLog("found highlight container: %s" % (len(spl)), level=xbmc.LOGDEBUG)
-    max = 10
-    thumbNr = 1
-    for i in range(1, len(spl), 1):
-        if thumbNr > max:
-            break
-        entry = spl[i]
-        channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(entry)[0]
-        thumbs = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumbUrl=thumbs[0]
-        logoUrl=thumbs[1]
-        if len(re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry))>0:
-            title = re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry)[0]
-        else:
-            title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(entry)[0]
-        detailurl = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(entry)[0]
-        detailurl = re.compile('href="(.+?)"', re.DOTALL).findall(detailurl)[0]
-        date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(entry)[0]
-        highlighttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(entry)[0]
-        descs = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(entry)
-        extrainfos = descs[0]
-        if len(descs) == 2:
-            comment = descs[1]
-        else:
-            comment = ""
-        genre = re.compile('(.+?) | ', re.DOTALL).findall(extrainfos)
-    
-        extrainfos2 = extrainfos.split('|')
-        genre = extrainfos2[0]
-   
-        writeLog("===========TESTTIP START=============", level=xbmc.LOGDEBUG)
-        writeLog("Title "+title, level=xbmc.LOGDEBUG)
-        writeLog("Thumb "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Time "+highlighttime, level=xbmc.LOGDEBUG)
-        writeLog("Date "+date, level=xbmc.LOGDEBUG)
-        writeLog("Channel "+channel, level=xbmc.LOGDEBUG)
-        writeLog("Icon "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Genre "+genre, level=xbmc.LOGDEBUG)
-        writeLog("Comment "+comment, level=xbmc.LOGDEBUG)
-        writeLog("Extrainfos "+extrainfos, level=xbmc.LOGDEBUG)
-        writeLog("Detailurl "+detailurl, level=xbmc.LOGDEBUG)
-        writeLog("WatchType "+mastertype, level=xbmc.LOGDEBUG)
-        writeLog("===========TESTTIP END=============", level=xbmc.LOGDEBUG)
+ # Retrieve tvhighlights for a choosen watchtype. Set Home properties.
+# Possible watchtypes are spielfilm, sport, serie, unterhaltung, doku-und-info, kinder
 
-        if showtimeframe == "false":
-            writeLog("TVHighlights: Show only upcoming events", level=xbmc.LOGDEBUG)
-            refreshtimestamp = int(time.time())
-            now = datetime.datetime.now()
-            highlightstimestampstr = '%s-%s-%s %s:00' % (now.year, now.month, now.day, highlighttime)
-            highlightstimestampstr = highlightstimestampstr.replace('-', ' ')
-            highlightstimestamp = date2timeStamp(highlightstimestampstr, "%Y %m %d %H:%M:%S")
-            if (highlightstimestamp <= refreshtimestamp):
-                writeLog("TVHighlights: Throw away entry, its in the past", level=xbmc.LOGDEBUG)
-                continue
-        channelexist = channelName2channelId(channel)
-        writeLog("TVHighlights: Channel-Exists %s" % (channelexist), level=xbmc.LOGDEBUG)
-        if (channelexist == 0):
-            writeLog("TVHighlights: Channel %s not in PVR" % (channel), level=xbmc.LOGDEBUG)
-            continue
-        else:
-            channelpvrid = channelexist
-            writeLog("TVHighlights: Found Channel %s in PVR %s" % (channel,channelpvrid), level=xbmc.LOGDEBUG)
-            logoUrl = str(pvrchannelid2logo(channelpvrid))
-            channel = pvrchannelid2channelname(channelpvrid)
-    
-        writeLog("TVHighlights: %s" % (channelName2channelId(channel)), level=xbmc.LOGDEBUG)
-
-        writeLog("===========TIP START=============", level=xbmc.LOGDEBUG)
-        writeLog("Title "+title, level=xbmc.LOGDEBUG)
-        writeLog("Thumb "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Time "+highlighttime, level=xbmc.LOGDEBUG)
-        writeLog("Date "+date, level=xbmc.LOGDEBUG)
-        writeLog("Channel "+channel, level=xbmc.LOGDEBUG)
-        writeLog("PVR-Channel %s" % (channelpvrid), level=xbmc.LOGDEBUG)
-        writeLog("Icon "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Logo "+logoUrl, level=xbmc.LOGDEBUG)
-        writeLog("Genre "+genre, level=xbmc.LOGDEBUG)
-        writeLog("Comment "+comment, level=xbmc.LOGDEBUG)
-        writeLog("Extrainfos "+extrainfos, level=xbmc.LOGDEBUG)
-        writeLog("Detailurl "+detailurl, level=xbmc.LOGDEBUG)
-        writeLog("WatchType "+mastertype, level=xbmc.LOGDEBUG)
-        writeLog("===========TIP END=============", level=xbmc.LOGDEBUG)
-
-        WINDOW.setProperty( "TVHighlightsToday.%s.Title" %(thumbNr), title )
-        WINDOW.setProperty( "TVHighlightsToday.%s.PVRID" %(thumbNr), str(channelpvrid) )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Thumb" %(thumbNr), thumbUrl )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Time" %(thumbNr), highlighttime )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Date" %(thumbNr), date )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Channel" %(thumbNr), channel )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Icon" %(thumbNr), thumbUrl )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Logo" %(thumbNr), logoUrl )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Genre" %(thumbNr), genre )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Comment" %(thumbNr), comment )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Extrainfos" %(thumbNr), extrainfos )
-        WINDOW.setProperty( "TVHighlightsToday.%s.Popup" %(thumbNr), detailurl)
-        WINDOW.setProperty( "TVHighlightsToday.%s.WatchType" %(thumbNr), mastertype)
-
-        thumbNr += 1
-    
-# Retrieve tvhighlights for a choosen watchtype. Set Home properties.
-# Possible watchtype types are spielfilm,sport,serie,unterhaltung,doku,kinder
-
-def get_tvdigital_watchtype_highlights(watchtype):
-    writeLog('Start retrieve watchtype %s' % (watchtype), level=xbmc.LOGDEBUG)
+def get_tvd_highlights(watchtype):
     url = 'http://www.tvdigital.de/tv-tipps/heute/%s/' % (watchtype)
+    writeLog('Start retrieving watchtype %s from %s' % (watchtype, url), level=xbmc.LOGDEBUG)
 
     spl = getUnicodePage(url, container='class="highlight-container"')
-
     data = TVDScraper()
-    data.scrapeHighlights(getUnicodePage(url, container='class="highlight-container"'))
-
     max = 10
-    thumbNr = 1
+
     for i in range(1, len(spl), 1):
-        if thumbNr > max:
+        if i > max:
             break
-        entry = spl[i]
-        channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(entry)[0]
-        thumbs = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumbUrl=thumbs[0]
-        logoUrl=thumbs[1]
-        if len(re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry))>0:
-            title = re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry)[0]
-        else:
-            title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(entry)[0]
-        detailurl = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(entry)[0]
-        detailurl = re.compile('href="(.+?)"', re.DOTALL).findall(detailurl)[0]
-        date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(entry)[0]
-        highlighttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(entry)[0]
-        descs = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(entry)
-        extrainfos = descs[0]
-        if len(descs) == 2:
-            comment = descs[1]
-        else:
-            comment = ""
-        genre = re.compile('(.+?) | ', re.DOTALL).findall(extrainfos)
-    
-        extrainfos2 = extrainfos.split('|')
-        genre = extrainfos2[0]
-   
-        watchtype.translate(None, '-')
 
-        if showtimeframe == "false":
+        data.scrapeHighlights(spl[i])
+
+        if not showtimeframe:
             writeLog("TVHighlights: Show only upcoming events", level=xbmc.LOGDEBUG)
-            refreshtimestamp = int(time.time())
             now = datetime.datetime.now()
-            highlightstimestampstr = '%s-%s-%s %s:00' % (now.year, now.month, now.day, highlighttime)
-            highlightstimestampstr = highlightstimestampstr.replace('-', ' ')
-            highlightstimestamp = date2timeStamp(highlightstimestampstr, "%Y %m %d %H:%M:%S")
-            if (highlightstimestamp <= refreshtimestamp):
-                writeLog("TVHighlights: Throw away entry, its in the past", level=xbmc.LOGDEBUG)
+            data.datetime = '%s.%s.%s %s' % (now.day, now.month, now.year, data.starttime)
+            timestamp = date2timeStamp(data.datetime, '%d.%m.%Y %H:%M')
+            if timestamp < int(time.time()):
+                writeLog('TVHighlights: discard entry, start time is in the past', level=xbmc.LOGDEBUG)
                 continue
-        channelexist = channelName2channelId(channel)
-        writeLog("TVHighlights: Channel-Exists %s" % (channelexist), level=xbmc.LOGDEBUG)
-        if (channelexist == 0):
-            writeLog("TVHighlights: Channel %s not in PVR" % (channel), level=xbmc.LOGDEBUG)
+
+        pvrchannel = channelName2channelId(data.channel)
+        if not  pvrchannel:
+            writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
-        else:
-            channelpvrid = channelexist
-            writeLog("TVHighlights: Found Channel %s in PVR %s" % (channel,channelpvrid), level=xbmc.LOGDEBUG)
-            logoUrl = str(pvrchannelid2logo(channelpvrid))
-            channel = pvrchannelid2channelname(channelpvrid)
 
-        writeLog("TVHighlights: %s" % (channelName2channelId(channel)), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Title" %(watchtype,thumbNr), title )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Thumb" %(watchtype,thumbNr), thumbUrl )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Time" %(watchtype,thumbNr), highlighttime )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Date" %(watchtype,thumbNr), date )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Channel" %(watchtype,thumbNr), channel )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.PVRID" %(watchtype,thumbNr), str(channelpvrid) )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Icon" %(watchtype,thumbNr), thumbUrl )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Logo" %(watchtype,thumbNr), logoUrl )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Genre" %(watchtype,thumbNr), genre )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Comment" %(watchtype,thumbNr), comment )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Extrainfos" %(watchtype,thumbNr), extrainfos )
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.Popup" %(watchtype,thumbNr),detailurl)
-        WINDOW.setProperty( "TV%sHighlightsToday.%s.WatchType" %(watchtype,thumbNr),watchtype)
-        writeLog("===========TIP "+watchtype+" START=============", level=xbmc.LOGDEBUG)
-        writeLog("Title "+title, level=xbmc.LOGDEBUG)
-        writeLog("Thumb "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Time "+highlighttime, level=xbmc.LOGDEBUG)
-        writeLog("Date "+date, level=xbmc.LOGDEBUG)
-        writeLog("Channel "+channel, level=xbmc.LOGDEBUG)
-        writeLog("PVRID %s" % (channelpvrid), level=xbmc.LOGDEBUG)
-        writeLog("Icon "+thumbUrl, level=xbmc.LOGDEBUG)
-        writeLog("Logo "+logoUrl, level=xbmc.LOGDEBUG)
-        writeLog("Genre "+genre, level=xbmc.LOGDEBUG)
-        writeLog("Comment "+comment, level=xbmc.LOGDEBUG)
-        writeLog("Extrainfos "+extrainfos, level=xbmc.LOGDEBUG)
-        writeLog("Detailurl "+detailurl, level=xbmc.LOGDEBUG)
-        writeLog("Watchtype "+watchtype, level=xbmc.LOGDEBUG)
-        writeLog("===========TIP "+watchtype+" END=============", level=xbmc.LOGDEBUG)
-        thumbNr = thumbNr + 1
+        data.logoURL = pvrchannelid2logo(pvrchannel)
+        data.channel = pvrchannelid2channelname(pvrchannel)
 
+        writeLog('Data for item   #%s' %(i), level=xbmc.LOGDEBUG)
+        writeLog('Success:        %s' % (data.success), level=xbmc.LOGDEBUG)
+        writeLog('Title:          %s' % (data.title), level=xbmc.LOGDEBUG)
+        writeLog('Picture:        %s' % (data.picture), level=xbmc.LOGDEBUG)
+        writeLog('Time:           %s' % (data.starttime), level=xbmc.LOGDEBUG)
+        writeLog('Date:           %s' % (data.date), level=xbmc.LOGDEBUG)
+        writeLog('Comment:        %s' % (data.subtitle), level=xbmc.LOGDEBUG)
+        writeLog('Channel:        %s' % (data.channel), level=xbmc.LOGDEBUG)
+        writeLog('PVRID:          %s' % (pvrchannel), level=xbmc.LOGDEBUG)
+        writeLog('Icon:           %s' % (data.picture), level=xbmc.LOGDEBUG)
+        writeLog('Logo:           %s' % (data.logoURL), level=xbmc.LOGDEBUG)
+        writeLog('Genre:          %s' % (data.genre), level=xbmc.LOGDEBUG)
+        writeLog('Extrainfos:     %s' % (data.extrainfos), level=xbmc.LOGDEBUG)
+        writeLog('Popup:          %s' % (data.detailURL), level=xbmc.LOGDEBUG)
+        writeLog('Watchtype:      %s' % (watchtype), level=xbmc.LOGDEBUG)
+
+        watchtype = ''
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Title" %(watchtype,i), data.title )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Thumb" %(watchtype,i), data.picture )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Time" %(watchtype,i), data.starttime )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Date" %(watchtype,i), data.date )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Channel" %(watchtype,i), data.channel )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.PVRID" %(watchtype,i), str(pvrchannel) )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Icon" %(watchtype,i), data.picture )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Logo" %(watchtype,i), data.logoURL )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Genre" %(watchtype,i), data.genre )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Comment" %(watchtype,i), data.subtitle )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Extrainfos" %(watchtype,i), data.extrainfos )
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.Popup" %(watchtype,i), data.detailURL)
+        WINDOW.setProperty( "TV%sHighlightsToday.%s.WatchType" %(watchtype,i),watchtype)
 
 # Set details to Window (INFO Labels)
 
@@ -508,30 +351,36 @@ def showInfoWindow(detailurl):
     data = TVDScraper()
     data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
 
-    writeLog('Success:        %s' % (data.success), level=xbmc.LOGNOTICE)
-    writeLog('Title:          %s' % (data.title), level=xbmc.LOGNOTICE)
-    writeLog('Subtitle:       %s' % (data.subtitle), level=xbmc.LOGNOTICE)
-    writeLog('Picture:        %s' % (data.picture), level=xbmc.LOGNOTICE)
-    writeLog('Channel:        %s' % (data.channel), level=xbmc.LOGNOTICE)
-    writeLog('Start Time:     %s' % (data.starttime), level=xbmc.LOGNOTICE)
-    writeLog('End Time:       %s' % (data.endtime), level=xbmc.LOGNOTICE)
-    writeLog('Rating Value:   %s' % (data.ratingValue), level=xbmc.LOGNOTICE)
-    writeLog('Reviews:        %s' % (data.reviewCount), level=xbmc.LOGNOTICE)
-    writeLog('Best Rating:    %s' % (data.bestRating), level=xbmc.LOGNOTICE)
-    writeLog('Description:    %s' % (data.description), level=xbmc.LOGNOTICE)
-    writeLog('Keywords:       %s' % (data.keywords), level=xbmc.LOGNOTICE)
-    writeLog('Rating Data:    %s' % (data.ratingdata), level=xbmc.LOGNOTICE)
-    writeLog('Broadcast Info: %s' % (data.broadcastinfo), level=xbmc.LOGNOTICE)
+    writeLog('Success:        %s' % (data.success), level=xbmc.LOGDEBUG)
+    writeLog('Title:          %s' % (data.title), level=xbmc.LOGDEBUG)
+    writeLog('Subtitle:       %s' % (data.subtitle), level=xbmc.LOGDEBUG)
+    writeLog('Picture:        %s' % (data.picture), level=xbmc.LOGDEBUG)
+    writeLog('Channel:        %s' % (data.channel), level=xbmc.LOGDEBUG)
+    writeLog('Start Time:     %s' % (data.starttime), level=xbmc.LOGDEBUG)
+    writeLog('End Time:       %s' % (data.endtime), level=xbmc.LOGDEBUG)
+    writeLog('Rating Value:   %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
+    writeLog('Reviews:        %s' % (data.reviewCount), level=xbmc.LOGDEBUG)
+    writeLog('Best Rating:    %s' % (data.bestRating), level=xbmc.LOGDEBUG)
+    writeLog('Description:    %s' % (data.description), level=xbmc.LOGDEBUG)
+    writeLog('Keywords:       %s' % (data.keywords), level=xbmc.LOGDEBUG)
+    writeLog('Rating Data:    %s' % (data.ratingdata), level=xbmc.LOGDEBUG)
+    writeLog('Broadcast Info: %s' % (data.broadcastinfo), level=xbmc.LOGDEBUG)
 
     clearInfoProps()
 
     if data.success:
+
+        now = datetime.datetime.now()
+        data.datetime = '%s.%s.%s %s' % (now.day, now.month, now.year, data.starttime)
+        data.date = time.strftime(getDateFormat(), time.strptime(data.datetime, '%d.%m.%Y %H:%M'))
+
         WINDOW.setProperty( "TVHighlightsToday.Info.Title", data.title)
         WINDOW.setProperty( "TVHighlightsToday.Info.Picture", data.picture)
         WINDOW.setProperty( "TVHighlightsToday.Info.Subtitle", data.subtitle)
         WINDOW.setProperty( "TVHighlightsToday.Info.Description", data.description)
         WINDOW.setProperty( "TVHighlightsToday.Info.Broadcastdetails", data.broadcastinfo)
         WINDOW.setProperty( "TVHighlightsToday.Info.Channel", data.channel)
+        WINDOW.setProperty( "TVHighlightsToday.Info.Date", data.date)
         WINDOW.setProperty( "TVHighlightsToday.Info.StartTime", data.starttime)
         WINDOW.setProperty( "TVHighlightsToday.Info.EndTime", data.endtime)
         WINDOW.setProperty( "TVHighlightsToday.Info.Keywords", ', '.join(data.keywords))
@@ -544,6 +393,18 @@ def showInfoWindow(detailurl):
             i += 1
 
         Popup.doModal()
+
+
+# Parameter Wrapper, strongly required to ensure backward compatibility
+
+def get_tvdigital_mastermode_highlights(watchtype):
+    get_tvd_highlights(watchtype)
+
+def get_tvdigital_watchtype_highlights(singewatchtype):
+    get_tvd_highlights(singewatchtype)
+
+
+
 
 # M A I N
 #________
@@ -562,8 +423,7 @@ else:
     watchtype = None
     detailurl= "-"
 
-writeLog("Methode in Script:", level=xbmc.LOGDEBUG)
-writeLog(methode, level=xbmc.LOGDEBUG)
+writeLog("Methode in Script: %s" % (methode), level=xbmc.LOGDEBUG)
 
 if methode=='mastermode':
         writeLog("Methode: Mastermode Retrieve", level=xbmc.LOGDEBUG)
@@ -580,7 +440,7 @@ elif methode=='get_single_tvdigital':
         writeLog("Methode: Single Methode Retrieve for "+watchtype, level=xbmc.LOGDEBUG)
         if watchtype in TVDWatchtypes:
             clearProperties(watchtype)
-            get_tvdigital_watchtype_highlights(watchtype)
+            get_tvd_highlights(watchtype)
 
 elif methode=='infopopup':
         writeLog('Methode: set Detail INFOs to Window', level=xbmc.LOGDEBUG)

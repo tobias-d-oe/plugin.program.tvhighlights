@@ -12,7 +12,7 @@
         <setting id="serie" type="bool" label="30121" default="false"/>
         <setting id="sport" type="bool" label="30122" default="false"/>
         <setting id="unterhaltung" type="bool" label="30123" default="false"/>
-        <setting id="doku" type="bool" label="30124" default="false"/>
+        <setting id="doku-und-info" type="bool" label="30124" default="false"/>
         <setting id="kinder" type="bool" label="30125" default="false"/>
         <setting id="prefer_hd" type="bool" label="30113" default="true" />
     </category>

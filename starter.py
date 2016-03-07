@@ -89,13 +89,13 @@ class Starter():
         self.screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group()) * 60
         self.refreshcontent = self.mdelay/self.screenrefresh
 
-        writeLog('Settings (re)loaded')
-        writeLog('Mastermode:               %s' % (self.mastermode))
-        writeLog('Show notifications:       %s' % (self.enableinfo))
-        writeLog('Show timeframe:           %s' % (self.showtimeframe))
-        writeLog('Refresh interval content: %s secs' % (self.mdelay))
-        writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh))
-        writeLog('Refreshing content ratio: %s' % (self.refreshcontent))
+        writeLog('Settings (re)loaded', level=xbmc.LOGDEBUG)
+        writeLog('Mastermode:               %s' % (self.mastermode), level=xbmc.LOGDEBUG)
+        writeLog('Show notifications:       %s' % (self.enableinfo), level=xbmc.LOGDEBUG)
+        writeLog('Show timeframe:           %s' % (self.showtimeframe), level=xbmc.LOGDEBUG)
+        writeLog('Refresh interval content: %s secs' % (self.mdelay), level=xbmc.LOGDEBUG)
+        writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh), level=xbmc.LOGDEBUG)
+        writeLog('Refreshing content ratio: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
 
         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_mode")')
 

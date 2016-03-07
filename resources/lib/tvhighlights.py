@@ -13,9 +13,11 @@ class TVDScraper():
         self.picture = ''
         self.broadcastinfo = ''
         self.channel = ''
+        self.logoURL = ''
         self.date = ''
         self.starttime = ''
         self.endtime = ''
+        self.datetime = ''
         self.detailURL = ''
         self.ratingValue = '-'
         self.reviewCount = '-'
@@ -23,27 +25,32 @@ class TVDScraper():
         self.description = ''
         self.genre = ''
         self.keywords = ''
+        self.extrainfos = ''
         self.ratingdata = ''
         self.broadcastflags = ''
 
-    def scrapeHighlights(self, content, contentID):
+    def scrapeHighlights(self, content):
+        self.success = False
+
         try:
-            for item in content:
-                self.channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(item)[0]
-                if re.compile('<span>(.+?)</span>', re.DOTALL).findall(item):
-                    self.title = re.compile('<span>(.+?)</span>', re.DOTALL).findall(item)[0]
-                else:
-                    self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(item)[0]
+            self.channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(content)[0]
+            if re.compile('<span>(.+?)</span>', re.DOTALL).findall(content) > 0:
+                self.title = re.compile('<span>(.+?)</span>', re.DOTALL).findall(content)[0]
+            else:
+                self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(content)[0]
 
-                _info = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(item)[0]
-                self.detailURL = re.compile('href="(.+?)"', re.DOTALL).findall(_info)[0]
+            self.picture = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
+            _info = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(content)[0]
+            self.detailURL = re.compile('href="(.+?)"', re.DOTALL).findall(_info)[0]
 
-                self.date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(item)[0]
-                self.starttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(item)[0]
-                self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(item)[0].split('|')[0]
-                self.subtitle = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(item)[1]
-        except:
-            self.success = False
+            self.date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(content)[0]
+            self.starttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(content)[0]
+            self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0]
+            self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
+            self.subtitle = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
+            self.success = True
+        except IndexError:
+            pass
 
     def scrapeDetailPage(self, content, contentID):
 
