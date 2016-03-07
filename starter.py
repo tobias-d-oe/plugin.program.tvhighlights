@@ -82,29 +82,23 @@ class Starter():
         self.screenrefresh = 0
 
     def getSettings(self):
-        self.mastermode = True if __addon__.getSetting('mastermode').upper() == 'TRUE' else False
+        # self.mastermode = True if __addon__.getSetting('mastermode').upper() == 'TRUE' else False
         self.enableinfo = True if __addon__.getSetting('enableinfo').upper() == 'TRUE' else False
-        self.showtimeframe = True if __addon__.getSetting('showtimeframe').upper() == 'TRUE' else False
+        self.showOutdated = True if __addon__.getSetting('showOutdated').upper() == 'TRUE' else False
         self.mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group()) * 60
         self.screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group()) * 60
         self.refreshcontent = self.mdelay/self.screenrefresh
 
         writeLog('Settings (re)loaded', level=xbmc.LOGDEBUG)
-        writeLog('Mastermode:               %s' % (self.mastermode), level=xbmc.LOGDEBUG)
+        # writeLog('Mastermode:               %s' % (self.mastermode), level=xbmc.LOGDEBUG)
         writeLog('Show notifications:       %s' % (self.enableinfo), level=xbmc.LOGDEBUG)
-        writeLog('Show timeframe:           %s' % (self.showtimeframe), level=xbmc.LOGDEBUG)
+        writeLog('Show outdated Broadcasts: %s' % (self.showtimeframe), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval content: %s secs' % (self.mdelay), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh), level=xbmc.LOGDEBUG)
         writeLog('Refreshing content ratio: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
 
-        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_mode")')
-
-        if self.mastermode:
-            xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_master_elements")')
-        else:
-            xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=get_split_elements")')
-
-        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
+        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_screen")')
 
     def start(self):
         writeLog('Starting %s V.%s' % (__addonname__, __version__))
@@ -123,22 +117,17 @@ class Starter():
                 break
             counter += 1
             if counter >= self.refreshcontent:
-                writeLog('Refreshing TVHighlights @%s' % time.time(), level=xbmc.LOGDEBUG)
+                writeLog('Scrape TVHighlights @%s' % time.time(), level=xbmc.LOGDEBUG)
                 notifyOSD(__LS__(30010), __LS__(30018), __icon__, enabled=self.enableinfo)
-                xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=settings")')
+                xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
                 counter = 0
             else:
                 notifyOSD(__LS__(30010), __LS__(30108), __icon__, enabled=self.enableinfo)
-                if not self.showtimeframe:
-                    if self.mastermode:
-                        writeLog('Refresh content on home screen in mastermode')
-                        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_mastermode")')
-                    else:
-                        writeLog('Refresh content on home screen in splitmode')
-                        xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_splitmode")')
+                if not self.showOutdated:
+                    writeLog('Refresh content on home screen')
+                    xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_screen")')
 
 if __name__ == '__main__':
     starter = Starter()
     starter.start()
     del starter
-

@@ -53,17 +53,27 @@ with open(ChannelTranslateFile, 'r') as transfile:
 
 TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku-und-info', 'kinder']
 properties = ['Title', 'Thumb', 'Time', 'Date', 'Channel', 'PVRID', 'Icon', 'Logo', 'Genre', 'Comment', 'Year', 'Duration', 'Extrainfos', 'WatchType']
-infoprops = ['Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
+infoprops = ['Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'Date', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
 
-mastermode = True if __addon__.getSetting('mastermode').upper() == 'TRUE' else False
-showtimeframe = True if __addon__.getSetting('showtimeframe').upper() == 'TRUE' else False
-mastertype = __addon__.getSetting('mastertype')
+showOutdated = True if __addon__.getSetting('showOutdated').upper() == 'TRUE' else False
+prefer_hd = True if __addon__.getSetting('prefer_hd').upper() = 'TRUE' else False
 
-def getsplitmodes():
-    splitmodes = []
-    for watchtype in TVDWatchtypes:
-        if __addon__.getSetting(watchtype).upper() == 'TRUE': splitmodes.append(watchtype)
-    return splitmodes
+def categories():
+    cats = []
+    for category in TVDWatchtypes:
+        if __addon__.getSetting(category).upper() == 'TRUE': cats.append(category)
+    return cats
+
+cats = categories()
+if len(cats) == 0:
+    # ToDo
+    # no category set, show error message
+    pass
+elif len(cats) == 1:
+    mastermode = True
+    mastertype = categories()[0]
+else
+    mastermode = False
 
 # get remote URL, replace '\' and optional split into css containers
 
@@ -139,10 +149,11 @@ def channelName2channelId(channelname):
         res = res['result'].get('channels')
         for channels in res:
 
-            # priorize HD Channel
-            if channelname+" HD".lower() in channels['label'].lower(): 
+            # prefer HD Channel if available
+            if prefer_hd and  channelname+" HD".lower() in channels['label'].lower():
                 writeLog("TVHighlights found HD priorized channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
+
             if channelname.lower() in channels['label'].lower(): 
                 writeLog("TVHighlights found  channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
@@ -286,7 +297,7 @@ def get_tvd_highlights(watchtype):
 
     spl = getUnicodePage(url, container='class="highlight-container"')
     data = TVDScraper()
-    max = 10
+    max = 14
 
     for i in range(1, len(spl), 1):
         if i > max:
@@ -294,7 +305,7 @@ def get_tvd_highlights(watchtype):
 
         data.scrapeHighlights(spl[i])
 
-        if not showtimeframe:
+        if not showOutdated:
             writeLog("TVHighlights: Show only upcoming events", level=xbmc.LOGDEBUG)
             now = datetime.datetime.now()
             data.datetime = '%s.%s.%s %s' % (now.day, now.month, now.year, data.starttime)
@@ -468,8 +479,8 @@ elif methode=='refresh_mastermode':
 
 elif methode=='refresh_splitmode':
         writeLog('Methode: refresh_splitmode '+watchtype, level=xbmc.LOGDEBUG)
-        for mode in getsplitmodes():
-            refresh_tvdigital_splitmode_highlights(mode)
+        for category in categories():
+            refresh_tvdigital_splitmode_highlights(category)
 
 elif methode=='get_split_elements':
         writeLog('Methode: get Split Elements', level=xbmc.LOGDEBUG)
@@ -500,7 +511,7 @@ elif methode=='show_select_dialog':
         get_tvdigital_mastermode_highlights(TVDWatchtypes[ret])
 
 elif methode=='set_mastermode':
-    __addon__.setSetting('mastermode', 'true')
+    # __addon__.setSetting('mastermode', 'true')
     WINDOW.setProperty("TVHighlightsToday.Mode", "mastermode")
     WINDOW.setProperty("TVHighlightsToday.Mastermode", str(mastertype))
 
@@ -531,5 +542,5 @@ elif methode=='settings' or methode is None or not (watchtype in TVDWatchtypes):
             clearProperties()
             get_tvdigital_mastermode_highlights(mastertype)
         else:
-            for mode in getsplitmodes():
-                get_tvdigital_watchtype_highlights(mode)
+            for category in categories():
+                get_tvdigital_watchtype_highlights(category)
