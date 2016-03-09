@@ -4,6 +4,7 @@
 <strings>
     <string id="30010">TV Highlights</string>
     <string id="30011">TV Highlights Rubrik</string>
+    <string id="30018">Lade Infos von TV Digital</string>
 
     <string id="30100">TV Highlights Filminformation</string>
     <string id="30101">Genre:</string>
@@ -13,17 +14,15 @@
     <string id="30105">Rubriken</string>
     <string id="30106">Dienst gestartet</string>
     <string id="30107">Timer setzen</string>
-    <string id="30108">Aktualisiere TV Highlights</string>
+    <string id="30108">Aktualisiere TV Highlights Widgets</string>
 
     <string id="30110">Allgemein</string>
-    <!-- <string id="30111">Mastermode</string>
-    <string id="30112">Splitmode</string> -->
     <string id="30113">Bevorzuge HD Sendungen</string>
     <string id="30114">Info bei Systemstart und Refresh</string>
     <string id="30126">Zeige zurückliegende Sendungen an</string>
     <string id="30127">Aktualisierungsintervall Inhalte</string>
     <string id="30128">Aktualisierungsintervall Anzeige</string>
-    <string id="30129">Problem mit TV Digital Website</string>
+    <string id="30129">TV Digital Website nicht erreichbar</string>
 
     <string id="30120">Spielfilm</string>
     <string id="30121">Serie</string>

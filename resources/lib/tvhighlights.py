@@ -6,40 +6,34 @@ class TVDScraper():
 
     def __init__(self):
 
-        self.success = True
+        # Items of highlights pages
 
-        self.title = ''
-        self.subtitle = ''
-        self.picture = ''
-        self.broadcastinfo = ''
-        self.channel = ''
-        self.logoURL = ''
-        self.date = ''
-        self.starttime = ''
-        self.endtime = ''
-        self.datetime = ''
+        self.channel = ''           # both
+        self.title = ''             # both
+        self.thumb = ''             # both
         self.detailURL = ''
+        self.date = ''
+        self.starttime = ''         # both
+        self.genre = ''
+        self.extrainfos = ''
+        self.subtitle = ''
+
+        # Items of detail pages
+
+        self.endtime = ''
         self.ratingValue = '-'
-        self.reviewCount = '-'
         self.bestRating = '-'
         self.description = ''
-        self.genre = ''
         self.keywords = ''
-        self.extrainfos = ''
         self.ratingdata = ''
         self.broadcastflags = ''
 
     def scrapeHighlights(self, content):
-        self.success = False
 
         try:
             self.channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(content)[0]
-            if re.compile('<span>(.+?)</span>', re.DOTALL).findall(content) > 0:
-                self.title = re.compile('<span>(.+?)</span>', re.DOTALL).findall(content)[0]
-            else:
-                self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(content)[0]
-
-            self.picture = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
+            self.title = re.compile('<h2><span>(.+?)</span></h2>', re.DOTALL).findall(content)[0]
+            self.thumb = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
             _info = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(content)[0]
             self.detailURL = re.compile('href="(.+?)"', re.DOTALL).findall(_info)[0]
 
@@ -48,50 +42,38 @@ class TVDScraper():
             self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0]
             self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
             self.subtitle = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
-            self.success = True
         except IndexError:
             pass
 
     def scrapeDetailPage(self, content, contentID):
 
-        if contentID not in content:
-            self.success = False
-        else:
-            self.picture = re.compile('<img id="galpic" itemprop="image" src="(.+?)"', re.DOTALL).findall(content)[0]
-            self.title = re.compile('<li id="broadcast-title" itemprop="name">(.+?)</li>', re.DOTALL).findall(content)[0]
+        if contentID in content:
+
+            container = content.split(contentID)
+            container.pop(0)
+            content = container[0]
+
+            # Thumb, Boradcast info (channel, start, stop)
             try:
-                self.subtitle = re.compile('<li id="broadcast-subtitle"><h2>(.+?)</h2>', re.DOTALL).findall(content)[0]
-            except IndexError:
-                pass
+                self.title = re.compile('<li id="broadcast-title" itemprop="name">(.*?)</li>', re.DOTALL).findall(content)[0]
+                self.thumb = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
 
-            # Broadcast details (channel, start, stop)
-            bd = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li id="broadcast-genre', re.DOTALL).findall(content)
-            bd = re.compile('<li>(.+?)</li>', re.DOTALL).findall(bd[0])
-            try:
-                bd = bd[0]
-                bd = re.sub('<[^<]+?>','', bd)
-                bd = bd.split('|')
+                # Broadcast info (channel, start, stop)
+                bd = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li id="broadcast-genre', re.DOTALL).findall(content)[0]
+                bd = re.compile('<li>(.+?)</li>', re.DOTALL).findall(bd)[0]
+                bd = re.sub(re.compile('<.*?>', re.DOTALL), '', bd)
 
-                # TVHighlights channel
-                self.channel = bd[0]
+                self.channel = bd.split('|')[0].strip()
 
-                # start, stop
-                self.starttime = bd[2].split('-')[0].strip()
-                self.endtime = bd[2].split('-')[1]
-
-                self.broadcastinfo = '%s: %s - %s' % (self.channel, self.starttime, self.endtime)
+                _t = bd.split('|')[2]
+                self.starttime = _t.split('-')[0].strip()
+                self.endtime = _t.split('-')[1].strip()
             except IndexError:
                 pass
 
             # Ratings
             try:
                 self.ratingValue = re.compile('<span itemprop="ratingValue">(.+?)</span>', re.DOTALL).findall(content)[0]
-            except IndexError:
-                pass
-
-            # Reviews
-            try:
-                self.reviewCount = re.compile('<span itemprop="reviewCount">(.+?)</span>', re.DOTALL).findall(content)[0]
             except IndexError:
                 pass
 
@@ -109,11 +91,8 @@ class TVDScraper():
 
             # Keywords
             try:
-                self.keywords = re.compile('<ul class="genre"(.+?)class="desc-block">', re.DOTALL).findall(content)
-                kw = re.compile('<span itemprop="genre">(.+?)</span>', re.DOTALL).findall(self.keywords[0])
-                if len(kw) == 0:
-                    kw = re.compile('<span >(.+?)</span>', re.DOTALL).findall(self.keywords[0])
-                self.keywords = kw
+                _keywords = re.compile('<ul class="genre"(.+?)</ul>', re.DOTALL).findall(content)[0]
+                self.keywords = ', '.join(re.compile('span itemprop="genre">(.+?)</span>', re.DOTALL).findall(_keywords))
             except IndexError:
                 pass
 
@@ -138,5 +117,3 @@ class TVDScraper():
                 self.broadcastflags = re.compile('class="(.+?)"', re.DOTALL).findall(bc_info[0])
             except IndexError:
                 pass
-
-            self.success = True

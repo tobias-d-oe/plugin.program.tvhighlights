@@ -4,6 +4,8 @@
 <strings>
     <string id="30010">TV Highlights</string>
     <string id="30011">TV Highlights Genre</string>
+    <string id="30018">Get Infos from TV Digital</string>
+
 
     <string id="30100">TV Highlights Movieinformation</string>
     <string id="30101">Genre:</string>
@@ -13,7 +15,7 @@
     <string id="30105">Column</string>
     <string id="30106">Service started</string>
     <string id="30107">Add Timer</string>
-    <string id="30108">Refreshing TV Highlights</string>
+    <string id="30108">Refreshing TV Highlights Widgets</string>
 
     <string id="30110">General</string>
     <string id="30111">Mastermode</string>
