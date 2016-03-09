@@ -32,9 +32,12 @@ __path__ = __addon__.getAddonInfo('path')
 __LS__ = __addon__.getLocalizedString
 __icon__ = xbmc.translatePath(os.path.join(__path__, 'icon.png'))
 
-WINDOW = xbmcgui.Window(10000)
+__showOutdated__ = True if __addon__.getSetting('showOutdated').upper() == 'TRUE' else False
+__prefer_hd__ = True if __addon__.getSetting('prefer_hd').upper() == 'TRUE' else False
 
+WINDOW = xbmcgui.Window(10000)
 OSD = xbmcgui.Dialog()
+TVDURL = 'http://www.tvdigital.de/tv-tipps/heute/'
 
 # Helpers
 
@@ -55,25 +58,13 @@ TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku-und-info',
 properties = ['Title', 'Thumb', 'Time', 'Date', 'Channel', 'PVRID', 'Icon', 'Logo', 'Genre', 'Comment', 'Duration', 'Extrainfos', 'WatchType']
 infoprops = ['ID', 'Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'Date', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
 
-showOutdated = True if __addon__.getSetting('showOutdated').upper() == 'TRUE' else False
-prefer_hd = True if __addon__.getSetting('prefer_hd').upper() == 'TRUE' else False
+# create category list from selection in settings
 
 def categories():
     cats = []
     for category in TVDWatchtypes:
         if __addon__.getSetting(category).upper() == 'TRUE': cats.append(category)
     return cats
-
-cats = categories()
-if len(cats) == 0:
-    # ToDo
-    # no category set, show error message
-    pass
-elif len(cats) == 1:
-    mastermode = True
-    mastertype = categories()[0]
-else:
-    mastermode = False
 
 # get remote URL, replace '\' and optional split into css containers
 
@@ -148,7 +139,7 @@ def channelName2channelId(channelname):
         for channels in res:
 
             # prefer HD Channel if available
-            if prefer_hd and  (channelname + " HD").lower() in channels['label'].lower():
+            if __prefer_hd__ and  (channelname + " HD").lower() in channels['label'].lower():
                 writeLog("TVHighlights found HD priorized channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
 
@@ -210,7 +201,7 @@ def clearWidgets(start=1):
 
 def refreshWidget(category, offset=0):
 
-    if not showOutdated:
+    if not __showOutdated__:
         writeLog("TVHighlights: Show only upcoming events", level=xbmc.LOGDEBUG)
 
     blobs = WINDOW.getProperty('TVD.%s.blobs' % category)
@@ -226,7 +217,7 @@ def refreshWidget(category, offset=0):
 
         blob = eval(WINDOW.getProperty('TVD.%s.%s' % (category, i)))
 
-        if not showOutdated:
+        if not __showOutdated__:
             _now = datetime.datetime.now()
             _dt = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['time'])
             timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
@@ -259,7 +250,7 @@ def refreshHighlights():
     clearWidgets(offset + 1)
 
 def scrapeTVDPage(category):
-    url = 'http://www.tvdigital.de/tv-tipps/heute/%s/' % (category)
+    url = '%s%s/' % (TVDURL, category)
     writeLog('Start scraping category %s from %s' % (category, url), level=xbmc.LOGDEBUG)
 
     content = getUnicodePage(url, container='class="highlight-container"')
@@ -377,11 +368,14 @@ def showInfoWindow(detailurl):
 
 # Get starting methode
 
+methode = None
+detailurl = None
+
 if len(sys.argv)>1:
     params = parameters_string_to_dict(sys.argv[1])
     methode = urllib.unquote_plus(params.get('methode', ''))
     detailurl = urllib.unquote_plus(params.get('detailurl', ''))
-    
+
 writeLog("Methode from external script: %s" % (methode), level=xbmc.LOGDEBUG)
 writeLog("Detailurl from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
 
