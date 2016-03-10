@@ -46,7 +46,10 @@ def notifyOSD(header, message, icon=xbmcgui.NOTIFICATION_INFO, disp=4000, enable
         OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, disp)
 
 def writeLog(message, level=xbmc.LOGNOTICE):
-        xbmc.log('[%s %s]: %s' % (__addonID__, __version__,  message.encode('utf-8')), level)
+        try:
+            xbmc.log('[%s %s]: %s' % (__addonID__, __version__,  message.encode('utf-8')), level)
+        except Exception:
+            xbmc.log('[%s %s]: %s' % (__addonID__, __version__,  'Fatal: Message could not displayed'), xbmc.LOGERROR)
 
 # End Helpers
 
@@ -55,6 +58,7 @@ with open(ChannelTranslateFile, 'r') as transfile:
     ChannelTranslate=transfile.read().rstrip('\n')
 
 TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku-und-info', 'kinder']
+TVDTranslations = {'spielfilm': __LS__(30120), 'serie': __LS__(30121), 'sport': __LS__(30122), 'unterhaltung': __LS__(30123), 'doku-und-info': __LS__(30124), 'kinder':__LS__(30125)}
 properties = ['Title', 'Thumb', 'Time', 'Date', 'Channel', 'PVRID', 'Icon', 'Logo', 'Genre', 'Comment', 'Duration', 'Extrainfos', 'WatchType']
 infoprops = ['ID', 'Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'Date', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
 
@@ -69,7 +73,11 @@ def categories():
 # get remote URL, replace '\' and optional split into css containers
 
 def getUnicodePage(url, container=None):
-    req = urllib2.urlopen(url)
+    try:
+        req = urllib2.urlopen(url.encode('utf-8'))
+    except UnicodeDecodeError:
+        req = urllib2.urlopen(url)
+
     encoding = 'utf-8'
     if "content-type" in req.headers and "charset=" in req.headers['content-type']:
         encoding=req.headers['content-type'].split('charset=')[-1]
@@ -195,7 +203,7 @@ def clearInfoProperties():
 
 def clearWidgets(start=1):
     writeLog('Clear widgets from #%s and up' % (start), level=xbmc.LOGDEBUG)
-    for i in range(start, 10, 1):
+    for i in range(start, 16, 1):
         for property in properties:
             WINDOW.clearProperty('TVHighlightsToday.%s.%s' % (i, property))
 
@@ -209,7 +217,7 @@ def refreshWidget(category, offset=0):
 
     widget = 1
     for i in range(1, int(blobs) + 1, 1):
-        if i > int(blobs) or offset + widget > 9:
+        if i > int(blobs) or offset + widget > 15:
             writeLog('Max. Limit of widgets reached, abort processing', level=xbmc.LOGDEBUG)
             break
 
@@ -237,7 +245,9 @@ def refreshWidget(category, offset=0):
         WINDOW.setProperty('TVHighlightsToday.%s.Comment' % (offset + widget), blob['comment'])
         WINDOW.setProperty('TVHighlightsToday.%s.Extrainfos' % (offset + widget), blob['extrainfos'])
         WINDOW.setProperty('TVHighlightsToday.%s.Popup' % (offset + widget), blob['popup'])
-        WINDOW.setProperty('TVHighlightsToday.%s.WatchType' % (offset + widget), blob['category'])
+        WINDOW.setProperty('TVHighlightsToday.%s.WatchType' % (offset + widget), TVDTranslations[blob['category']])
+        WINDOW.setProperty('TVHighlightsToday.%s.Endtime' % (offset + widget), blob['endtime'])
+        WINDOW.setProperty('TVHighlightsToday.%s.Desc' % (offset + widget), blob['description'])
         widget += 1
 
     return widget - 1
@@ -272,6 +282,8 @@ def scrapeTVDPage(category):
             writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
 
+        data.scrapeDetailPage(getUnicodePage(data.detailURL), 'id="broadcast-content-box"')
+
         logoURL = pvrchannelid2logo(pvrchannelID)
         channel = pvrchannelid2channelname(pvrchannelID)
 
@@ -290,6 +302,9 @@ def scrapeTVDPage(category):
         writeLog('Popup:          %s' % (data.detailURL), level=xbmc.LOGDEBUG)
         writeLog('Watchtype:      %s' % (category), level=xbmc.LOGDEBUG)
         writeLog('', level=xbmc.LOGDEBUG)
+        writeLog('End Time:       %s' % (data.endtime), level=xbmc.LOGDEBUG)
+        writeLog('Description:    %s' % (data.description), level=xbmc.LOGDEBUG)
+        writeLog('', level=xbmc.LOGDEBUG)
 
         blob = {
                 'id': unicode('TVD.%s.%s' % (i, category)),
@@ -304,7 +319,9 @@ def scrapeTVDPage(category):
                 'comment': unicode(unicode(data.subtitle)),
                 'extrainfos': unicode(data.extrainfos),
                 'popup': unicode(data.detailURL),
-                'category': unicode(category)
+                'category': unicode(category),
+                'endtime': unicode(data.endtime),
+                'description': unicode(data.description)
                }
 
         WINDOW.setProperty('TVD.%s.%s' % (category, i), str(blob))
@@ -402,6 +419,4 @@ elif methode=='show_select_dialog':
         unused = refreshWidget(TVDWatchtypes[ret])
         clearWidgets(unused + 1)
     else:
-        for category in categories():
-            scrapeTVDPage(category)
         refreshHighlights()

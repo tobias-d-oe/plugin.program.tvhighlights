@@ -6,7 +6,6 @@
     <string id="30011">TV Highlights Genre</string>
     <string id="30018">Get Infos from TV Digital</string>
 
-
     <string id="30100">TV Highlights Movieinformation</string>
     <string id="30101">Genre:</string>
     <string id="30102">Rating:</string>
@@ -33,8 +32,6 @@
     <string id="30123">Entertainment</string>
     <string id="30124">Documentation and Info</string>
     <string id="30125">Children</string>
-
-    <string id="30126">TV Highlights Genre</string>
 
     <string id="30130">Refresh cycle of content must be higher than screen refresh (Recommended 120/5).</string>
 
