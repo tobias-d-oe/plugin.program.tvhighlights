@@ -13,12 +13,13 @@
     <string id="30104">TV Highlights des Tages</string>
     <string id="30105">Rubriken</string>
     <string id="30106">Dienst gestartet</string>
-    <string id="30107">Timer setzen</string>
+    <string id="30107">Umschalttimer setzen</string>
     <string id="30108">Aktualisiere TV Highlights Widgets</string>
 
     <string id="30110">Allgemein</string>
     <string id="30113">Bevorzuge HD Sendungen</string>
     <string id="30114">Info bei Systemstart und Refresh</string>
+    <string id="30115">Anzahl max. Einträge pro Rubrik</string>
     <string id="30126">Zeige zurückliegende Sendungen an</string>
     <string id="30127">Aktualisierungsintervall Inhalte</string>
     <string id="30128">Aktualisierungsintervall Anzeige</string>

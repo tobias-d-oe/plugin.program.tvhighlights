@@ -104,8 +104,8 @@
             </control>
             <control type="image">
                     <description>Channel Logo</description>
-                    <left>635</left>
-                    <top>360</top>
+                    <left>640</left>
+                    <top>355</top>
                     <width>80</width>
                     <height>42</height>
                     <texture border="5">$INFO[Window(Home).Property(TVHighlightsToday.Info.Logo)]</texture>

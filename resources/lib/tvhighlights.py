@@ -8,12 +8,12 @@ class TVDScraper():
 
         # Items of highlights pages
 
-        self.channel = ''           # both
-        self.title = ''             # both
-        self.thumb = ''             # both
+        self.channel = ''
+        self.title = ''
+        self.thumb = ''
         self.detailURL = ''
-        self.date = ''
-        self.starttime = ''         # both
+        # self.date = ''
+        self.starttime = ''
         self.genre = ''
         self.extrainfos = ''
         self.subtitle = ''
@@ -53,20 +53,13 @@ class TVDScraper():
             container.pop(0)
             content = container[0]
 
-            # Thumb, Boradcast info (channel, start, stop)
             try:
-                self.title = re.compile('<li id="broadcast-title" itemprop="name">(.*?)</li>', re.DOTALL).findall(content)[0]
-                self.thumb = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
-
                 # Broadcast info (channel, start, stop)
                 bd = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li id="broadcast-genre', re.DOTALL).findall(content)[0]
                 bd = re.compile('<li>(.+?)</li>', re.DOTALL).findall(bd)[0]
                 bd = re.sub(re.compile('<.*?>', re.DOTALL), '', bd)
 
-                self.channel = bd.split('|')[0].strip()
-
                 _t = bd.split('|')[2]
-                self.starttime = _t.split('-')[0].strip()
                 self.endtime = _t.split('-')[1].strip()
             except IndexError:
                 pass

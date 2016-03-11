@@ -55,15 +55,6 @@ _screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).grou
 
 writeLog('Content refresh: %s mins, screen refresh: %s mins' % (_mdelay, _screenrefresh), level=xbmc.LOGDEBUG)
 
-if _mdelay == 0:
-    writeLog('Don\'t start Service, content refresh is 0', level=xbmc.LOGERROR)
-    sys.exit()
-
-if _screenrefresh >= _mdelay:
-    notifyOSD(__LS__(30010), __LS__(30130), icon=__icon__, disp=10000)
-    writeLog('Don\'t start Service, content refresh is lower than screen refresh', level=xbmc.LOGERROR)
-    sys.exit()
-
 class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs ):
         xbmc.Monitor.__init__(self)
@@ -75,9 +66,9 @@ class MyMonitor(xbmc.Monitor):
 class Starter():
 
     def __init__(self):
-        self.mastermode = None
-        self.enableinfo = None
-        self.showtimeframe = None
+        self.enableinfo = False
+        self.showOutdated = False
+        self.prefer_hd = True
         self.mdelay = 0
         self.screenrefresh = 0
 
@@ -88,14 +79,17 @@ class Starter():
         self.mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group()) * 60
         self.screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group()) * 60
         self.refreshcontent = self.mdelay/self.screenrefresh
+        self.mincycle = int(re.match('\d+', __LS__(30151)).group()) * 60
+        self.poll = self.screenrefresh/self.mincycle
 
-        writeLog('Settings (re)loaded', level=xbmc.LOGDEBUG)
+        writeLog('Settings (re)loaded')
         writeLog('Show notifications:       %s' % (self.enableinfo), level=xbmc.LOGDEBUG)
         writeLog('Show outdated Broadcasts: %s' % (self.showOutdated), level=xbmc.LOGDEBUG)
         writeLog('Prefer HD channel:        %s' % (self.prefer_hd), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval content: %s secs' % (self.mdelay), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh), level=xbmc.LOGDEBUG)
-        writeLog('Refreshing content ratio: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
+        writeLog('Refreshing multiplicator: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
+        writeLog('Poll cycles:              %s' % (self.poll), level=xbmc.LOGDEBUG)
 
         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
 
@@ -106,20 +100,25 @@ class Starter():
 
         ## Thoughts: refresh = 5m; refresh-content=120 => i-max=120/5;
 
-        counter = 0
+        _c = 0
+        _pc = 0
         monitor = MyMonitor()
         while not monitor.abortRequested():
             if monitor.settingsChanged:
                 self.getSettings()
                 monitor.settingsChanged = False
-            if monitor.waitForAbort(self.screenrefresh):
+            if monitor.waitForAbort(self.mincycle):
                 break
-            counter += 1
-            if counter >= self.refreshcontent:
-                writeLog('Scrape TVHighlights @%s' % time.time(), level=xbmc.LOGDEBUG)
+            _pc += 1
+            if _pc < self.poll:
+                continue
+            _c += 1
+            _pc = 0
+            if _c >= self.refreshcontent:
+                writeLog('Scrape TV Today Highlights')
                 notifyOSD(__LS__(30010), __LS__(30018), __icon__, enabled=self.enableinfo)
                 xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
-                counter = 0
+                _c = 0
             else:
                 notifyOSD(__LS__(30010), __LS__(30108), __icon__, enabled=self.enableinfo)
                 if not self.showOutdated:

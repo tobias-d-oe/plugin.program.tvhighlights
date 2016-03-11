@@ -75,13 +75,13 @@
                                                 <aspectratio>keep</aspectratio>
                                                 <align>left</align>
                                                 <aligny>top</aligny>
-                                                <texture background="false">$INFO[ListItem.ActualIcon]</texture>
+                                                <texture background="false">$INFO[ListItem.Property(logo)]</texture>
                                                 <bordersize>5</bordersize>
                                         </control>
                                         <control type="label" id="starttime">
-                                                <left>120</left>
+                                                <left>110</left>
                                                 <top>195</top>
-                                                <width>100</width>
+                                                <width>110</width>
                                                 <height>20</height>
                                                 <font>font10</font>
                                                 <textcolor>grey2</textcolor>
@@ -118,9 +118,9 @@
                                                 <label>$INFO[ListItem.Property(comment)]</label>
                                         </control>
                                         <control type="label" id="channel">
-                                                <left>120</left>
+                                                <left>110</left>
                                                 <top>215</top>
-                                                <width>100</width>
+                                                <width>110</width>
                                                 <height>20</height>
                                                 <font>font10</font>
                                                 <textcolor>grey2</textcolor>
@@ -193,13 +193,13 @@
                                                 <width>80</width>
                                                 <height>80</height>
                                                 <aspectratio>keep</aspectratio>
-                                                <texture background="false">$INFO[ListItem.ActualIcon]</texture>
+                                                <texture background="false">$INFO[ListItem.Property(logo)]</texture>
                                                 <bordersize>5</bordersize>
                                         </control>
                                         <control type="label">
-                                                <left>120</left>
+                                                <left>110</left>
                                                 <top>195</top>
-                                                <width>100</width>
+                                                <width>110</width>
                                                 <height>20</height>
                                                 <font>font10</font>
                                                 <textcolor>grey2</textcolor>
@@ -265,9 +265,9 @@
                                                 <visible>Control.HasFocus(58051)</visible>
                                         </control>
                                         <control type="label" id="channel">
-                                                <left>120</left>
+                                                <left>110</left>
                                                 <top>215</top>
-                                                <width>100</width>
+                                                <width>110</width>
                                                 <height>20</height>
                                                 <font>font10</font>
                                                 <textcolor>grey2</textcolor>
@@ -294,6 +294,7 @@
                                 <content>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.1.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.1.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.1.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.1.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.1.WatchType)]</property>
@@ -302,13 +303,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.1.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.1.Thumb)]</thumb>
-                                                <!-- <logo>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</logo> -->
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</icon>
-                                                <!-- <icon>$INFO[Window.Property(TVHighlightsToday.1.Logo)]</icon> -->
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.1.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.2.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.2.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.2.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.2.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.2.WatchType)]</property>
@@ -317,11 +316,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.2.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.2.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.2.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.2.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.2.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.3.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.3.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.3.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.3.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.3.WatchType)]</property>
@@ -330,12 +329,12 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.3.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.3.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.3.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.3.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.3.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.4.Channel)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.4.Comment)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.4.Logo)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.4.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.4.WatchType)]</property>
                                                 <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.4.Extrainfos)]</property>
@@ -343,11 +342,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.4.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.4.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.4.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.4.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.4.Title))</visible>
                                         </item> 
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.5.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.5.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.5.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.5.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.5.WatchType)]</property>
@@ -356,11 +355,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.5.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.5.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.5.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.5.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.5.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.6.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.6.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.6.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.6.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.6.WatchType)]</property>
@@ -369,11 +368,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.6.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.6.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.6.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.6.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.6.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.7.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.7.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.7.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.7.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.7.WatchType)]</property>
@@ -382,11 +381,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.7.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.7.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.7.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.7.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.7.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.8.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.8.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.8.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.8.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.8.WatchType)]</property>
@@ -395,11 +394,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.8.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.8.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.8.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.8.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.8.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.9.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.9.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.9.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.9.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.9.WatchType)]</property>
@@ -408,12 +407,24 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.9.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.9.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.9.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.9.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.9.Title))</visible>
                                         </item>
-
+                                        <item>
+                                                <property name="channel">$INFO[Window.Property(TVHighlightsToday.10.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.10.Logo)]</property>
+                                                <property name="comment">$INFO[Window.Property(TVHighlightsToday.10.Comment)]</property>
+                                                <property name="genre">$INFO[Window.Property(TVHighlightsToday.10.Genre)]</property>
+                                                <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.10.WatchType)]</property>
+                                                <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.10.Extrainfos)]</property>
+                                                <label>$INFO[Window.Property(TVHighlightsToday.10.Title)]</label>
+                                                <label2>$INFO[Window.Property(TVHighlightsToday.10.Time)]</label2>
+                                                <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.10.Popup)]")</onclick>
+                                                <thumb>$INFO[Window.Property(TVHighlightsToday.10.Thumb)]</thumb>
+                                                <visible>!IsEmpty(Window.Property(TVHighlightsToday.10.Title))</visible>
+                                        </item>                                        
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.11.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.11.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.11.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.11.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.11.WatchType)]</property>
@@ -422,11 +433,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.11.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.11.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.11.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.11.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.11.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.12.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.12.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.12.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.12.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.12.WatchType)]</property>
@@ -435,11 +446,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.12.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.12.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.12.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.12.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.12.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.13.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.13.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.13.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.13.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.13.WatchType)]</property>
@@ -448,11 +459,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.13.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.13.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.13.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.13.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.13.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.14.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.14.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.14.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.14.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.14.WatchType)]</property>
@@ -461,11 +472,11 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.14.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.14.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.14.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.14.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.14.Title))</visible>
                                         </item>
                                         <item>
                                                 <property name="channel">$INFO[Window.Property(TVHighlightsToday.15.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.15.Logo)]</property>
                                                 <property name="comment">$INFO[Window.Property(TVHighlightsToday.15.Comment)]</property>
                                                 <property name="genre">$INFO[Window.Property(TVHighlightsToday.15.Genre)]</property>
                                                 <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.15.WatchType)]</property>
@@ -474,7 +485,6 @@
                                                 <label2>$INFO[Window.Property(TVHighlightsToday.15.Time)]</label2>
                                                 <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.15.Popup)]")</onclick>
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.15.Thumb)]</thumb>
-                                                <icon>$INFO[Window.Property(TVHighlightsToday.15.Logo)]</icon>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.15.Title))</visible>
                                         </item>
                                 </content>
