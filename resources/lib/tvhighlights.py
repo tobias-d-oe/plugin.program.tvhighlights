@@ -12,18 +12,17 @@ class TVDScraper():
         self.title = ''
         self.thumb = ''
         self.detailURL = ''
-        # self.date = ''
         self.starttime = ''
         self.genre = ''
         self.extrainfos = ''
-        self.subtitle = ''
+        self.outline = ''
 
         # Items of detail pages
 
         self.endtime = ''
         self.ratingValue = '-'
         self.bestRating = '-'
-        self.description = ''
+        self.plot = ''
         self.keywords = ''
         self.ratingdata = ''
         self.broadcastflags = ''
@@ -39,9 +38,9 @@ class TVDScraper():
 
             self.date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(content)[0]
             self.starttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(content)[0]
-            self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0]
+            self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0].strip()
             self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
-            self.subtitle = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
+            self.outline = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
         except IndexError:
             pass
 
@@ -78,7 +77,7 @@ class TVDScraper():
 
             # Movie description
             try:
-                self.description = re.compile('<span itemprop="description">(.+?)</span>', re.DOTALL).findall(content)[0]
+                self.plot = re.compile('<span itemprop="description">(.+?)</span>', re.DOTALL).findall(content)[0]
             except IndexError:
                 pass
 

@@ -6,7 +6,7 @@
     <string id="30011">TV Highlights Rubrik</string>
     <string id="30018">Lade Infos von TV Digital</string>
 
-    <string id="30100">TV Highlights Filminformation</string>
+    <string id="30100">TV Highlights Information zur Sendung</string>
     <string id="30101">Genre:</string>
     <string id="30102">Rating:</string>
     <string id="30103">Beschreibung:</string>
@@ -20,10 +20,7 @@
     <string id="30113">Bevorzuge HD Sendungen</string>
     <string id="30114">Info bei Systemstart und Refresh</string>
     <string id="30115">Anzahl max. Einträge pro Rubrik</string>
-    <string id="30126">Zeige zurückliegende Sendungen an</string>
-    <string id="30127">Aktualisierungsintervall Inhalte</string>
-    <string id="30128">Aktualisierungsintervall Anzeige</string>
-    <string id="30129">TV Digital Website nicht erreichbar</string>
+    <string id="30116">voreingestellte Rubriken</string>
 
     <string id="30120">Spielfilm</string>
     <string id="30121">Serie</string>
@@ -31,6 +28,11 @@
     <string id="30123">Unterhaltung</string>
     <string id="30124">Doku und Info</string>
     <string id="30125">Kinder</string>
+
+    <string id="30126">Zeige zurückliegende Sendungen an</string>
+    <string id="30127">Aktualisierungsintervall Inhalte</string>
+    <string id="30128">Aktualisierungsintervall Anzeige</string>
+    <string id="30129">TV Digital Website nicht erreichbar</string>
 
     <string id="30130">Der Aktualisierungszyklus für den Inhalt muss größer sein als der Aktualisierungszyklus für die Anzeige (empfohlen 120/5).</string>
 
