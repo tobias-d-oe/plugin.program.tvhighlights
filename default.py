@@ -458,7 +458,7 @@ elif methode == 'infopopup':
     showInfoWindow(detailurl)
 
 elif methode == 'switch_channel':
-    switchToChannel(int(pvrid)):
+    switchToChannel(int(pvrid))
 
 elif methode=='show_select_dialog':
     writeLog('Methode: show select dialog', level=xbmc.LOGDEBUG)
