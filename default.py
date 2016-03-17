@@ -191,6 +191,21 @@ def pvrchannelid2logo(channelid):
     else:
         return False
 
+def switchToChannel(pvrid):
+    writeLog('Switch to channel id %s' % (pvrid), level=xbmc.LOGDEBUG)
+    query = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "Player.Open",
+        "params": {"item": {"channelid": pvrid}}
+        }
+    res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+    if 'result' in res and res['result'] == 'OK':
+        return True
+    else:
+        writeLog('Couldn\'t switch to channel id %s' % (pvrid), level=xbmc.LOGDEBUG)
+    return False
+
 # clear all info properties (info window) in Home Window
 
 def clearInfoProperties():
@@ -229,10 +244,14 @@ def refreshWidget(category, offset=0):
 
         if not __showOutdated__:
             _now = datetime.datetime.now()
-            _dt = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['time'])
-            timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
-            if timestamp < int(time.time()):
-                writeLog('TVHighlights: discard blob TVD.%s.%s, start time @%s is in the past' % (category, i, _dt), level=xbmc.LOGDEBUG)
+            try:
+                _dt = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['time'])
+                timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
+                if timestamp + 60 * int(blob['runtime']) < int(time.time()) :
+                    writeLog('TVHighlights: discard blob TVD.%s.%s, broadcast @%s has already finished' % (category, i, _dt), level=xbmc.LOGDEBUG)
+                    continue
+            except ValueError:
+                writeLog('Could not determine any date value, discard blob TVD.%s.%s' % (category, i), level=xbmc.LOGERROR)
                 continue
 
         WINDOW.setProperty('TVHighlightsToday.%s.ID' % (offset + widget), blob['id'])
@@ -300,18 +319,20 @@ def scrapeTVDPage(category):
         channel = pvrchannelid2channelname(pvrchannelID)
 
         writeLog('', level=xbmc.LOGDEBUG)
-        writeLog('ID:             TVD.%s.%s' %(category, i), level=xbmc.LOGDEBUG)
-        writeLog('Title:          %s' % (data.title), level=xbmc.LOGDEBUG)
-        writeLog('Thumb:          %s' % (data.thumb), level=xbmc.LOGDEBUG)
-        writeLog('Start time:     %s' % (data.starttime), level=xbmc.LOGDEBUG)
-        writeLog('Channel (TVD):  %s' % (data.channel), level=xbmc.LOGDEBUG)
-        writeLog('Channel (PVR):  %s' % (channel), level=xbmc.LOGDEBUG)
-        writeLog('Channel logo:   %s' % (logoURL), level=xbmc.LOGDEBUG)
-        writeLog('Genre:          %s' % (data.genre), level=xbmc.LOGDEBUG)
-        writeLog('Outline:        %s' % (data.outline), level=xbmc.LOGDEBUG)
-        writeLog('Extrainfos:     %s' % (data.extrainfos), level=xbmc.LOGDEBUG)
-        writeLog('Popup:          %s' % (data.detailURL), level=xbmc.LOGDEBUG)
-        writeLog('Watchtype:      %s' % (category), level=xbmc.LOGDEBUG)
+        writeLog('ID:              TVD.%s.%s' %(category, i), level=xbmc.LOGDEBUG)
+        writeLog('Title:           %s' % (data.title), level=xbmc.LOGDEBUG)
+        writeLog('Thumb:           %s' % (data.thumb), level=xbmc.LOGDEBUG)
+        writeLog('Start time:      %s' % (data.starttime), level=xbmc.LOGDEBUG)
+        writeLog('Running Time:    %s' % (data.runtime), level=xbmc.LOGDEBUG)
+        writeLog('Channel (TVD):   %s' % (data.channel), level=xbmc.LOGDEBUG)
+        writeLog('Channel (PVR):   %s' % (channel), level=xbmc.LOGDEBUG)
+        writeLog('ChannelID (PVR): %s' % (pvrchannelID), level=xbmc.LOGDEBUG)
+        writeLog('Channel logo:    %s' % (logoURL), level=xbmc.LOGDEBUG)
+        writeLog('Genre:           %s' % (data.genre), level=xbmc.LOGDEBUG)
+        writeLog('Outline:         %s' % (data.outline), level=xbmc.LOGDEBUG)
+        writeLog('Extrainfos:      %s' % (data.extrainfos), level=xbmc.LOGDEBUG)
+        writeLog('Popup:           %s' % (data.detailURL), level=xbmc.LOGDEBUG)
+        writeLog('Watchtype:       %s' % (category), level=xbmc.LOGDEBUG)
         writeLog('', level=xbmc.LOGDEBUG)
 
         blob = {
@@ -319,8 +340,10 @@ def scrapeTVDPage(category):
                 'title': unicode(data.title),
                 'thumb': unicode(data.thumb),
                 'time': unicode(data.starttime),
+                'runtime': unicode(data.runtime),
                 'channel': unicode(data.channel),
                 'pvrid': unicode(channel),
+                'pvridnr': unicode(pvrchannelID),
                 'logo': unicode(logoURL),
                 'genre': unicode(data.genre),
                 'outline': unicode(unicode(data.outline)),
@@ -338,8 +361,8 @@ def scrapeTVDPage(category):
 
 def showInfoWindow(detailurl):
     writeLog('Set details to info screen', level=xbmc.LOGDEBUG)
-    # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-    Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+    Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+    # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
 
     data = TVDScraper()
     data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
@@ -353,6 +376,7 @@ def showInfoWindow(detailurl):
     writeLog('Thumb:             %s' % (blob['thumb']), level=xbmc.LOGDEBUG)
     writeLog('Channel (TVD):     %s' % (blob['channel']), level=xbmc.LOGDEBUG)
     writeLog('Preferred Channel: %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
+    writeLog('ChannelID:         %s' % (blob['pvridnr']), level=xbmc.LOGDEBUG)
     writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
     writeLog('End Time:          %s' % (data.endtime), level=xbmc.LOGDEBUG)
     writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
@@ -365,9 +389,21 @@ def showInfoWindow(detailurl):
 
     clearInfoProperties()
 
+    WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "")
+    WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "")
+
     now = datetime.datetime.now()
-    _datetime = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
-    _date = time.strftime(getDateFormat(), time.strptime(_datetime, '%d.%m.%Y %H:%M'))
+    _dt = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
+    _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
+
+    timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
+
+    if timestamp >= int(time.time()):
+        writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
+        WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
+    elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
+        writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
+        WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
 
     WINDOW.setProperty( "TVHighlightsToday.Info.Title", blob['title'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Picture", blob['thumb'])
@@ -375,9 +411,11 @@ def showInfoWindow(detailurl):
     WINDOW.setProperty( "TVHighlightsToday.Info.Description", data.plot)
     WINDOW.setProperty( "TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
     WINDOW.setProperty( "TVHighlightsToday.Info.Channel", blob['pvrid'])
+    WINDOW.setProperty( "TVHighlightsToday.Info.ChannelID", blob['pvridnr'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Logo", blob['logo'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Date", _date)
     WINDOW.setProperty( "TVHighlightsToday.Info.StartTime", blob['time'])
+    WINDOW.setProperty( "TVHighlightsToday.Info.RunTime", blob['runtime'])
     WINDOW.setProperty( "TVHighlightsToday.Info.EndTime", data.endtime)
     WINDOW.setProperty( "TVHighlightsToday.Info.Keywords", blob['genre'])
 
@@ -402,9 +440,11 @@ if len(sys.argv)>1:
     params = parameters_string_to_dict(sys.argv[1])
     methode = urllib.unquote_plus(params.get('methode', ''))
     detailurl = urllib.unquote_plus(params.get('detailurl', ''))
+    pvrid = urllib.unquote_plus(params.get('pvrid', ''))
 
 writeLog("Methode from external script: %s" % (methode), level=xbmc.LOGDEBUG)
 writeLog("Detailurl from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
+writeLog("pvrid from external script: %s" % (pvrid), level=xbmc.LOGDEBUG)
 
 if methode == 'scrape_highlights':
     for category in categories():
@@ -416,6 +456,9 @@ elif methode == 'refresh_screen':
 
 elif methode == 'infopopup':
     showInfoWindow(detailurl)
+
+elif methode == 'switch_channel':
+    switchToChannel(int(pvrid)):
 
 elif methode=='show_select_dialog':
     writeLog('Methode: show select dialog', level=xbmc.LOGDEBUG)

@@ -14,13 +14,15 @@
     <string id="30105">Rubriken</string>
     <string id="30106">Dienst gestartet</string>
     <string id="30107">Umschalttimer setzen</string>
-    <string id="30108">Aktualisiere TV Highlights Widgets</string>
+    <string id="30108">Jetzt umschalten</string>
+    <string id="30119">Abbrechen</string>
 
     <string id="30110">Allgemein</string>
     <string id="30113">Bevorzuge HD Sendungen</string>
     <string id="30114">Info bei Systemstart und Refresh</string>
     <string id="30115">Anzahl max. Einträge pro Rubrik</string>
     <string id="30116">voreingestellte Rubriken</string>
+    <string id="30117">Laufzeit:</string>
 
     <string id="30120">Spielfilm</string>
     <string id="30121">Serie</string>

@@ -13,6 +13,7 @@ class TVDScraper():
         self.thumb = ''
         self.detailURL = ''
         self.starttime = ''
+        self.runtime = ''
         self.genre = ''
         self.extrainfos = ''
         self.outline = ''
@@ -40,6 +41,10 @@ class TVDScraper():
             self.starttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(content)[0]
             self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0].strip()
             self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
+
+            _runtime = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[-1].strip()
+            self.runtime = re.match('\d+', _runtime).group()
+
             self.outline = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
         except IndexError:
             pass
