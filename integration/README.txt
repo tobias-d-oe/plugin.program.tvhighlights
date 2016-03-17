@@ -163,7 +163,7 @@ Beispiel 'onclick' für TV Highlights Element - Öffnet Popup generiert vom Plug
         RunScript(plugin.program.tvhighlights,"?methode=infopopup&detailurl=$INFO[Window.Property(TVHighlightsToday.1.Popup)]")
     </onclick>
 
-Properties
+Properties (<nr> im Bereich von 1...16)
 
   TVHighlightsToday.<nr>.ID
   TVHighlightsToday.<nr>.Title

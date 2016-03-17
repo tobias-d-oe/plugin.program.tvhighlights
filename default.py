@@ -219,7 +219,7 @@ def refreshWidget(category, offset=0):
 
     widget = 1
     for i in range(1, int(blobs) + 1, 1):
-        if widget > __maxHLCat__ or offset + widget > 15:
+        if widget > __maxHLCat__ or offset + widget > 16:
             writeLog('Max. Limit of widgets reached, abort processing', level=xbmc.LOGDEBUG)
             break
 

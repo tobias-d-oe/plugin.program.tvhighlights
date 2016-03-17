@@ -487,6 +487,19 @@
                                                 <thumb>$INFO[Window.Property(TVHighlightsToday.15.Thumb)]</thumb>
                                                 <visible>!IsEmpty(Window.Property(TVHighlightsToday.15.Title))</visible>
                                         </item>
+                                        <item>
+                                                <property name="channel">$INFO[Window.Property(TVHighlightsToday.16.Channel)]</property>
+                                                <property name="logo">$INFO[Window.Property(TVHighlightsToday.16.Logo)]</property>
+                                                <property name="comment">$INFO[Window.Property(TVHighlightsToday.16.Comment)]</property>
+                                                <property name="genre">$INFO[Window.Property(TVHighlightsToday.16.Genre)]</property>
+                                                <property name="watchtype">$INFO[Window.Property(TVHighlightsToday.16.WatchType)]</property>
+                                                <property name="extrainfos">$INFO[Window.Property(TVHighlightsToday.16.Extrainfos)]</property>
+                                                <label>$INFO[Window.Property(TVHighlightsToday.16.Title)]</label>
+                                                <label2>$INFO[Window.Property(TVHighlightsToday.16.Time)]</label2>
+                                                <onclick>RunScript(plugin.program.tvhighlights,"?methode=infopopup&amp;detailurl=$INFO[Window.Property(TVHighlightsToday.16.Popup)]")</onclick>
+                                                <thumb>$INFO[Window.Property(TVHighlightsToday.16.Thumb)]</thumb>
+                                                <visible>!IsEmpty(Window.Property(TVHighlightsToday.16.Title))</visible>
+                                        </item>                                        
                                 </content>
                         </control>
                         <control type="button">
