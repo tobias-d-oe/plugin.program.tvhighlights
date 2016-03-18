@@ -212,7 +212,7 @@ def clearInfoProperties():
     writeLog('clear all info properties (used in info popup)', level=xbmc.LOGDEBUG)
     for property in infoprops:
         WINDOW.clearProperty('TVHighlightsToday.Info.%s' % (property))
-    for i in range(1, 5, 1):
+    for i in range(1, 6, 1):
         WINDOW.clearProperty('TVHighlightsToday.RatingType.%s' % (i))
         WINDOW.clearProperty('TVHighlightsToday.Rating.%s' % (i))
 
@@ -220,7 +220,7 @@ def clearInfoProperties():
 
 def clearWidgets(start_from=1):
     writeLog('Clear widgets from #%s and up' % (start_from), level=xbmc.LOGDEBUG)
-    for i in range(start_from, 16, 1):
+    for i in range(start_from, 17, 1):
         for property in properties:
             WINDOW.clearProperty('TVHighlightsToday.%s.%s' % (i, property))
 
@@ -258,7 +258,7 @@ def refreshWidget(category, offset=0):
         WINDOW.setProperty('TVHighlightsToday.%s.Title' % (offset + widget), blob['title'])
         WINDOW.setProperty('TVHighlightsToday.%s.Thumb' % (offset + widget), blob['thumb'])
         WINDOW.setProperty('TVHighlightsToday.%s.Time' % (offset + widget), blob['time'])
-        WINDOW.setProperty('TVHighlightsToday.%s.Channel' % (offset + widget), blob['pvrid'])
+        WINDOW.setProperty('TVHighlightsToday.%s.Channel' % (offset + widget), blob['pvrchannel'])
         WINDOW.setProperty('TVHighlightsToday.%s.PVRID' % (offset + widget), blob['pvrid'])
         WINDOW.setProperty('TVHighlightsToday.%s.Logo' % (offset + widget), blob['logo'])
         WINDOW.setProperty('TVHighlightsToday.%s.Genre' % (offset + widget), blob['genre'])
@@ -342,8 +342,8 @@ def scrapeTVDPage(category):
                 'time': unicode(data.starttime),
                 'runtime': unicode(data.runtime),
                 'channel': unicode(data.channel),
-                'pvrid': unicode(channel),
-                'pvridnr': unicode(pvrchannelID),
+                'pvrchannel': unicode(channel),
+                'pvrid': unicode(pvrchannelID),
                 'logo': unicode(logoURL),
                 'genre': unicode(data.genre),
                 'outline': unicode(unicode(data.outline)),
@@ -361,22 +361,22 @@ def scrapeTVDPage(category):
 
 def showInfoWindow(detailurl):
     writeLog('Set details to info screen', level=xbmc.LOGDEBUG)
-    Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-    # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+    # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+    Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
 
     data = TVDScraper()
     data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
 
     blob = searchBlob('popup', detailurl)
 
-    broadcastinfo = '%s: %s - %s' % (blob['pvrid'], blob['time'], data.endtime)
+    broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], data.endtime)
 
     writeLog('', level=xbmc.LOGDEBUG)
     writeLog('Title:             %s' % (blob['title']), level=xbmc.LOGDEBUG)
     writeLog('Thumb:             %s' % (blob['thumb']), level=xbmc.LOGDEBUG)
     writeLog('Channel (TVD):     %s' % (blob['channel']), level=xbmc.LOGDEBUG)
-    writeLog('Preferred Channel: %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
-    writeLog('ChannelID:         %s' % (blob['pvridnr']), level=xbmc.LOGDEBUG)
+    writeLog('Channel (PVR):     %s' % (blob['pvrchannel']), level=xbmc.LOGDEBUG)
+    writeLog('ChannelID:         %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
     writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
     writeLog('End Time:          %s' % (data.endtime), level=xbmc.LOGDEBUG)
     writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
@@ -410,8 +410,8 @@ def showInfoWindow(detailurl):
     WINDOW.setProperty( "TVHighlightsToday.Info.Subtitle", blob['outline'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Description", data.plot)
     WINDOW.setProperty( "TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
-    WINDOW.setProperty( "TVHighlightsToday.Info.Channel", blob['pvrid'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.ChannelID", blob['pvridnr'])
+    WINDOW.setProperty( "TVHighlightsToday.Info.Channel", blob['pvrchannel'])
+    WINDOW.setProperty( "TVHighlightsToday.Info.ChannelID", blob['pvrid'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Logo", blob['logo'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Date", _date)
     WINDOW.setProperty( "TVHighlightsToday.Info.StartTime", blob['time'])
