@@ -361,8 +361,8 @@ def scrapeTVDPage(category):
 
 def showInfoWindow(detailurl):
     writeLog('Set details to info screen', level=xbmc.LOGDEBUG)
-    # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-    Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+    Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+    # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
 
     data = TVDScraper()
     data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')

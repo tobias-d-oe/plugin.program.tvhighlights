@@ -27,7 +27,7 @@
 #     CHANGELOG:  (02.09.2015) TDOe - First Publishing
 ###########################################################################
 
-import os,sys,time,re,xbmc,xbmcgui,xbmcaddon
+import os,re,xbmc,xbmcgui,xbmcaddon
 
 __addon__ = xbmcaddon.Addon()
 __addonID__ = __addon__.getAddonInfo('id')
@@ -60,7 +60,7 @@ class MyMonitor(xbmc.Monitor):
         xbmc.Monitor.__init__(self)
         self.settingsChanged = False
 
-    def onSettingsChanged( self ):
+    def onSettingsChanged(self):
         self.settingsChanged = True
 
 class Starter():
@@ -78,6 +78,7 @@ class Starter():
         self.prefer_hd = True if __addon__.getSetting('prefer_hd').upper() == 'TRUE' else False
         self.mdelay = int(re.match('\d+', __addon__.getSetting('mdelay')).group()) * 60
         self.screenrefresh = int(re.match('\d+', __addon__.getSetting('screenrefresh')).group()) * 60
+        self.delay = int(re.match('\d+', __addon__.getSetting('delay')).group()) * 1000
         self.refreshcontent = self.mdelay/self.screenrefresh
         self.mincycle = int(re.match('\d+', __LS__(30151)).group()) * 60
         self.poll = self.screenrefresh/self.mincycle
@@ -86,11 +87,13 @@ class Starter():
         writeLog('Show notifications:       %s' % (self.enableinfo), level=xbmc.LOGDEBUG)
         writeLog('Show outdated Broadcasts: %s' % (self.showOutdated), level=xbmc.LOGDEBUG)
         writeLog('Prefer HD channel:        %s' % (self.prefer_hd), level=xbmc.LOGDEBUG)
+        writeLog('Scraper start delay:      %s msecs' % (self.delay), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval content: %s secs' % (self.mdelay), level=xbmc.LOGDEBUG)
         writeLog('Refresh interval screen:  %s secs' % (self.screenrefresh), level=xbmc.LOGDEBUG)
         writeLog('Refreshing multiplicator: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
         writeLog('Poll cycles:              %s' % (self.poll), level=xbmc.LOGDEBUG)
 
+        xbmc.sleep(self.delay)
         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
 
     def start(self):
