@@ -392,16 +392,20 @@ def showInfoWindow(detailurl, showWindow=True):
 
     now = datetime.datetime.now()
     _dt = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
-    _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
+    try:
+        _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
 
-    timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
+        timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
 
-    if timestamp >= int(time.time()):
-        writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
-    elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
-        writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+        if timestamp >= int(time.time()):
+            writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
+            WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
+        elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
+            writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
+            WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+    except ImportError:
+        writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
+        _date = ''
 
     WINDOW.setProperty( "TVHighlightsToday.Info.Title", blob['title'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Picture", blob['thumb'])
@@ -471,7 +475,10 @@ elif methode=='show_select_dialog':
     ret = dialog.select(__LS__(30011), cats)
 
     if ret == 6:
+        for category in categories():
+            scrapeTVDPage(category)
         refreshHighlights()
+
     elif 0 <= ret <= 5:
         writeLog('%s selected' % (cats[ret]), level=xbmc.LOGDEBUG)
         scrapeTVDPage(TVDWatchtypes[ret])
