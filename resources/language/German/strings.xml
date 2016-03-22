@@ -37,6 +37,7 @@
     <string id="30129">TV Digital Website nicht erreichbar</string>
 
     <string id="30130">Der Aktualisierungszyklus für den Inhalt muss größer sein als der Aktualisierungszyklus für die Anzeige (empfohlen 120/5).</string>
+    <string id="30131">Scraper zeitverzögert starten</string>
 
     <string id="30150">0 (aus)</string>
     <string id="30151">5 min</string>
@@ -52,6 +53,10 @@
     <string id="30161">210 min</string>
     <string id="30162">240 min</string>
     <string id="30163">720 min</string>
-    <string id="30164">1440 min</string>
+
+    <string id="30170">5 sec</string>
+    <string id="30171">10 sec</string>
+    <string id="30172">15 sec</string>
+    <string id="30173">30 sec</string>
 </strings>
 

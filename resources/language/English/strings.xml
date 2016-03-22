@@ -39,6 +39,7 @@
     <string id="30129">Problem with TV Digital Website, no content behind link</string>
 
     <string id="30130">Refresh cycle of content must be higher than screen refresh (Recommended 120/5).</string>
+    <string id="30131">Start Scraper with delay</string>
 
     <string id="30150">0 (off)</string>
     <string id="30151">5 mins</string>
@@ -55,5 +56,10 @@
     <string id="30162">240 mins</string>
     <string id="30163">720 mins</string>
     <string id="30164">1440 mins</string>
+
+    <string id="30170">5 secs</string>
+    <string id="30171">10 secs</string>
+    <string id="30172">15 secs</string>
+    <string id="30173">30 secs</string>
 </strings>
 
