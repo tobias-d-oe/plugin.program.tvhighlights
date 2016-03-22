@@ -359,10 +359,8 @@ def scrapeTVDPage(category):
 
 # Set details to Window (INFO Labels)
 
-def showInfoWindow(detailurl):
-    writeLog('Set details to info screen', level=xbmc.LOGDEBUG)
-    # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-    Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+def showInfoWindow(detailurl, showWindow=True):
+    writeLog('Set details to home/info screen', level=xbmc.LOGDEBUG)
 
     data = TVDScraper()
     data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
@@ -426,7 +424,10 @@ def showInfoWindow(detailurl):
         WINDOW.setProperty( "TVHighlightsToday.Info.Rating.%s" %(i), r['rating'][0] )
         i += 1
 
-    Popup.doModal()
+    if showWindow:
+        # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+        Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+        Popup.doModal()
 
 # M A I N
 #________
@@ -456,6 +457,9 @@ elif methode == 'refresh_screen':
 
 elif methode == 'infopopup':
     showInfoWindow(detailurl)
+
+elif methode == 'set_details_to_home':
+    showInfoWindow(detailurl, showWindow=False)
 
 elif methode == 'switch_channel':
     switchToChannel(int(pvrid))
