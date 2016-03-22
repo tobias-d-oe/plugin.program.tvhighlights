@@ -1,8 +1,20 @@
+v0.1.6
+- simplified program code
+- combined spitmode and mastermode
+- outsourced scraper for TV Digital
+- added buttons for cancelling and immediate switch to broadcast
+- improved settings handling
+- improved handling for currently running broadcasts
+- exception handling established
+- debug code removed and shifted to kodi debugger
+- simplified properties for home and info window
+- and many more...
+
 v0.1.5
 - dependencies between PVR and shown TV Highlights
 - Changes the Update mechanism
 - added Timerbutton (service.kn.switchtimer)
-- lot of code rework andcleanup
+- lot of code rework and cleanup
 - Info-Window: changed default button
 - Workarounded python bug
 - Added json file for PVR->TV Digital Channel binding
