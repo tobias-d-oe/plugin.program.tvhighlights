@@ -197,7 +197,7 @@ def switchToChannel(pvrid):
         "jsonrpc": "2.0",
         "id": 1,
         "method": "Player.Open",
-        "params": {"item": {"channelid": pvrid}}
+        "params": {"item": {"channelid": int(pvrid)}}
         }
     res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
     if 'result' in res and res['result'] == 'OK':
@@ -429,17 +429,18 @@ def showInfoWindow(detailurl, showWindow=True):
         i += 1
 
     if showWindow:
-        # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-        Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+        Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+        # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
         Popup.doModal()
 
 # M A I N
 #________
 
-# Get starting methode
+# Get starting methode & params
 
 methode = None
 detailurl = None
+pvrid = None
 
 if len(sys.argv)>1:
     params = parameters_string_to_dict(sys.argv[1])
@@ -447,9 +448,9 @@ if len(sys.argv)>1:
     detailurl = urllib.unquote_plus(params.get('detailurl', ''))
     pvrid = urllib.unquote_plus(params.get('pvrid', ''))
 
-writeLog("Methode from external script: %s" % (methode), level=xbmc.LOGDEBUG)
-writeLog("Detailurl from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
-writeLog("pvrid from external script: %s" % (pvrid), level=xbmc.LOGDEBUG)
+writeLog("Methode called from external script: %s" % (methode), level=xbmc.LOGDEBUG)
+writeLog("Detailurl provided from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
+writeLog("pvrid provided from external script: %s" % (pvrid), level=xbmc.LOGDEBUG)
 
 if methode == 'scrape_highlights':
     for category in categories():
@@ -466,7 +467,7 @@ elif methode == 'set_details_to_home':
     showInfoWindow(detailurl, showWindow=False)
 
 elif methode == 'switch_channel':
-    switchToChannel(int(pvrid))
+    switchToChannel(pvrid)
 
 elif methode=='show_select_dialog':
     writeLog('Methode: show select dialog', level=xbmc.LOGDEBUG)
