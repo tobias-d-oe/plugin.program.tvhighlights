@@ -71,9 +71,9 @@ Skintegration:
 
 Um die TVHighlights des Tages in Confluence zu integrieren sind folgende Schritte erforderlich (als Beispiel dient hier
 die Integration unter einer Linux-Distribution). Die zum Kopieren erforderlichen Dateien befinden sich im Ordner
-'integration' des Plugins (plugin.program.tvhighlights):
+'integration/Confluence' bzw. 'integration/Destiny' des Plugins (plugin.program.tvhighlights):
 
-cd $HOME/.kodi/addons/plugin.program.tvhighlights/integration
+cd $HOME/.kodi/addons/plugin.program.tvhighlights/integration/Confluence
 
 1. Kopieren des XML Files in den Confluence Skin Ordner
 
@@ -202,6 +202,9 @@ Info-Window:
   TVHighlightsToday.Info.RatingType.5
   TVHighlightsToday.Info.Rating.5
 
+Sonstiges:
+
+  numCategories - Anzahl der im Setup ausgewählten Kategorien
 
 Debugging:
 

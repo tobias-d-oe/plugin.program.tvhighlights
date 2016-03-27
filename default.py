@@ -273,9 +273,12 @@ def refreshWidget(category, offset=0):
 def refreshHighlights():
 
     offset = 0
+    numcats = 0
     for category in categories():
         offset += refreshWidget(category, offset)
+        numcats += 1
     clearWidgets(offset + 1)
+    WINDOW.setProperty('numCategories',  str(numcats))
 
 def searchBlob(item, value):
 
