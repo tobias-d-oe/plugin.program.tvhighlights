@@ -94,7 +94,7 @@
                         <onup>855655</onup>
                         <ondown>855655</ondown>
                         <enable>!IsEmpty(Window(Home).Property(TVHighlightsToday.Info.isRunning))</enable>
-                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=switch_channel&pvrid=$INFO[Window(Home).Property(TVHighlightsToday.Info.ChannelID)]")</onclick>
+                        <onclick>RunScript(plugin.program.tvhighlights,"?methode=switch_channel&amp;pvrid=$INFO[Window(Home).Property(TVHighlightsToday.Info.ChannelID)]")</onclick>
                         <onclick>PreviousMenu</onclick>
                 </control>
                 <control type="button" id="22">

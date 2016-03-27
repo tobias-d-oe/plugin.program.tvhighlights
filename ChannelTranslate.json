@@ -4,4 +4,10 @@
 }, {
 	"name": "National Geographic Channel",
 	"pvrname": "NatGeo HD"
+}, {
+	"name": "BR",
+	"pvrname": "BR Süd HD"
+}, {
+	"name": "NDR",
+	"pvrname": "NDR FS MV HD"
 }]

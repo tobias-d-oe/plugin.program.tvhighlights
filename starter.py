@@ -93,7 +93,9 @@ class Starter():
         writeLog('Refreshing multiplicator: %s' % (self.refreshcontent), level=xbmc.LOGDEBUG)
         writeLog('Poll cycles:              %s' % (self.poll), level=xbmc.LOGDEBUG)
 
-        xbmc.sleep(self.delay)
+        if self.delay > 0:
+            xbmc.sleep(self.delay)
+
         xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
 
     def start(self):

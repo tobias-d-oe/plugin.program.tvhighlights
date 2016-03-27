@@ -1,6 +1,10 @@
+v0.1.7
+- Bugfixes
+- smaller improvements
+
 v0.1.6
 - simplified program code
-- combined spitmode and mastermode
+- combined splitmode and mastermode
 - outsourced scraper for TV Digital
 - added buttons for cancelling and immediate switch to broadcast
 - improved settings handling

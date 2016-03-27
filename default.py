@@ -197,7 +197,7 @@ def switchToChannel(pvrid):
         "jsonrpc": "2.0",
         "id": 1,
         "method": "Player.Open",
-        "params": {"item": {"channelid": pvrid}}
+        "params": {"item": {"channelid": int(pvrid)}}
         }
     res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
     if 'result' in res and res['result'] == 'OK':
@@ -273,9 +273,12 @@ def refreshWidget(category, offset=0):
 def refreshHighlights():
 
     offset = 0
+    numcats = 0
     for category in categories():
         offset += refreshWidget(category, offset)
+        numcats += 1
     clearWidgets(offset + 1)
+    WINDOW.setProperty('numCategories',  str(numcats))
 
 def searchBlob(item, value):
 
@@ -392,16 +395,20 @@ def showInfoWindow(detailurl, showWindow=True):
 
     now = datetime.datetime.now()
     _dt = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
-    _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
+    try:
+        _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
 
-    timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
+        timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
 
-    if timestamp >= int(time.time()):
-        writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
-    elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
-        writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
-        WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+        if timestamp >= int(time.time()):
+            writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
+            WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
+        elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
+            writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
+            WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+    except ImportError:
+        writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
+        _date = ''
 
     WINDOW.setProperty( "TVHighlightsToday.Info.Title", blob['title'])
     WINDOW.setProperty( "TVHighlightsToday.Info.Picture", blob['thumb'])
@@ -425,17 +432,18 @@ def showInfoWindow(detailurl, showWindow=True):
         i += 1
 
     if showWindow:
-        # Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-        Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+        Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+        # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
         Popup.doModal()
 
 # M A I N
 #________
 
-# Get starting methode
+# Get starting methode & params
 
 methode = None
 detailurl = None
+pvrid = None
 
 if len(sys.argv)>1:
     params = parameters_string_to_dict(sys.argv[1])
@@ -443,9 +451,9 @@ if len(sys.argv)>1:
     detailurl = urllib.unquote_plus(params.get('detailurl', ''))
     pvrid = urllib.unquote_plus(params.get('pvrid', ''))
 
-writeLog("Methode from external script: %s" % (methode), level=xbmc.LOGDEBUG)
-writeLog("Detailurl from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
-writeLog("pvrid from external script: %s" % (pvrid), level=xbmc.LOGDEBUG)
+writeLog("Methode called from external script: %s" % (methode), level=xbmc.LOGDEBUG)
+writeLog("Detailurl provided from external script: %s" % (detailurl), level=xbmc.LOGDEBUG)
+writeLog("pvrid provided from external script: %s" % (pvrid), level=xbmc.LOGDEBUG)
 
 if methode == 'scrape_highlights':
     for category in categories():
@@ -462,7 +470,7 @@ elif methode == 'set_details_to_home':
     showInfoWindow(detailurl, showWindow=False)
 
 elif methode == 'switch_channel':
-    switchToChannel(int(pvrid))
+    switchToChannel(pvrid)
 
 elif methode=='show_select_dialog':
     writeLog('Methode: show select dialog', level=xbmc.LOGDEBUG)
@@ -471,7 +479,10 @@ elif methode=='show_select_dialog':
     ret = dialog.select(__LS__(30011), cats)
 
     if ret == 6:
+        for category in categories():
+            scrapeTVDPage(category)
         refreshHighlights()
+
     elif 0 <= ret <= 5:
         writeLog('%s selected' % (cats[ret]), level=xbmc.LOGDEBUG)
         scrapeTVDPage(TVDWatchtypes[ret])
