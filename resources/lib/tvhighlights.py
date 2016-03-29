@@ -25,7 +25,11 @@ class TVDScraper():
         self.bestRating = '-'
         self.plot = ''
         self.keywords = ''
-        self.ratingdata = ''
+        self.ratingdata = [{'ratingtype': 'Spannung', 'rating': '-'},
+                                  {'ratingtype': 'Action',  'rating': '-'},
+                                  {'ratingtype': 'Humor', 'rating': '-'},
+                                  {'ratingtype': 'Romantik', 'rating': '-'},
+                                  {'ratingtype': 'Sex', 'rating': '-'}]
         self.broadcastflags = ''
 
     def scrapeHighlights(self, content):
@@ -102,11 +106,7 @@ class TVDScraper():
                     ratingdict = {'ratingtype': rating.split('span')[0][:-1], 'rating': re.compile('class="rating-(.+?)">', re.DOTALL).findall(rating)}
                     self.ratingdata.append(ratingdict)
             except IndexError:
-                self.ratingdata = [{'ratingtype': 'Spannung', 'rating': '-'},
-                                  {'ratingtype': 'Action',  'rating': '-'},
-                                  {'ratingtype': 'Humor', 'rating': '-'},
-                                  {'ratingtype': 'Romantik', 'rating': '-'},
-                                  {'ratingtype': 'Sex', 'rating': '-'}]
+                pass
 
             # Broadcast Flags
             try:
