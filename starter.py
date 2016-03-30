@@ -125,7 +125,7 @@ class Starter():
                 xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=scrape_highlights")')
                 _c = 0
             else:
-                notifyOSD(__LS__(30010), __LS__(30108), __icon__, enabled=self.enableinfo)
+                notifyOSD(__LS__(30010), __LS__(30109), __icon__, enabled=self.enableinfo)
                 if not self.showOutdated:
                     writeLog('Refresh content on home screen')
                     xbmc.executebuiltin('XBMC.RunScript(plugin.program.tvhighlights,"?methode=refresh_screen")')
