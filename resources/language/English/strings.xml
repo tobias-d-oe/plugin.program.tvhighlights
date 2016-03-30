@@ -41,6 +41,8 @@
     <string id="30130">Refresh cycle of content must be higher than screen refresh (Recommended 120/5).</string>
     <string id="30131">Start Scraper with delay</string>
 
+    <string id="30140">Details are not accessible</string>
+
     <string id="30150">0 (off)</string>
     <string id="30151">5 mins</string>
     <string id="30152">10 mins</string>

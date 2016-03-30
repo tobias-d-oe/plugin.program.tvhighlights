@@ -371,7 +371,7 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('Set details to home/info screen', level=xbmc.LOGDEBUG)
 
     data = TVDScraper()
-    data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
+    data.scrapeDetailPage(getUnicodePage(detailurl), 'div id="main-content" class="clearfix"')
 
     blob = searchBlob('popup', detailurl)
 
@@ -387,7 +387,7 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('End Time:          %s' % (blob['endtime']), level=xbmc.LOGDEBUG)
     writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
     writeLog('Best Rating:       %s' % (data.bestRating), level=xbmc.LOGDEBUG)
-    writeLog('Description:       %s' % (data.plot or __LS__(30129)), level=xbmc.LOGDEBUG)
+    writeLog('Description:       %s' % (data.plot or __LS__(30140)), level=xbmc.LOGDEBUG)
     writeLog('Keywords:          %s' % (data.keywords), level=xbmc.LOGDEBUG)
     writeLog('Rating Data:       %s' % (data.ratingdata), level=xbmc.LOGDEBUG)
     writeLog('Broadcast Flags:   %s' % (data.broadcastflags), level=xbmc.LOGDEBUG)
@@ -418,7 +418,7 @@ def showInfoWindow(detailurl, showWindow=True):
     WINDOW.setProperty("TVHighlightsToday.Info.Title", blob['title'])
     WINDOW.setProperty("TVHighlightsToday.Info.Picture", blob['thumb'])
     WINDOW.setProperty("TVHighlightsToday.Info.Subtitle", blob['outline'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Description", data.plot or __LS__(30129))
+    WINDOW.setProperty("TVHighlightsToday.Info.Description", data.plot or __LS__(30140))
     WINDOW.setProperty("TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
     WINDOW.setProperty("TVHighlightsToday.Info.Channel", blob['pvrchannel'])
     WINDOW.setProperty("TVHighlightsToday.Info.ChannelID", blob['pvrid'])

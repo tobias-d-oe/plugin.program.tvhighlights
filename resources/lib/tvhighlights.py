@@ -86,21 +86,22 @@ class TVDScraper():
 
             # Movie description
             try:
-                self.plot = re.compile('<span itemprop="description">(.+?)</span>', re.DOTALL).findall(content)[0]
+                self.plot = re.compile('<div class="description">(.+?)</div>', re.DOTALL).findall(content)[0]
+                self.plot = re.compile('<p>(.+?)</p>', re.DOTALL).findall(content)[0]
             except IndexError:
                 pass
 
             # Keywords
             try:
-                _keywords = re.compile('<ul class="genre"(.+?)</ul>', re.DOTALL).findall(content)[0]
-                self.keywords = ', '.join(re.compile('span itemprop="genre">(.+?)</span>', re.DOTALL).findall(_keywords))
+                _keywords = re.compile('<ul class="genre-list">(.+?)</ul>', re.DOTALL).findall(content)[0]
+                self.keywords = ', '.join(re.compile('itemprop="genre">(.+?)</a>', re.DOTALL).findall(_keywords))
             except IndexError:
                 pass
 
             # Rating details
             self.ratingdata = []
             try:
-                ratingbox = re.compile('<ul class="rating-box"(.+?)</ul>', re.DOTALL).findall(content)[0].split('<li>')
+                ratingbox = re.compile('<ul class="rating-genre"(.+?)</ul>', re.DOTALL).findall(content)[0].split('<li>')
                 ratingbox.pop(0)
                 for rating in ratingbox:
                     ratingdict = {'ratingtype': rating.split('span')[0][:-1], 'rating': re.compile('class="rating-(.+?)">', re.DOTALL).findall(rating)}
@@ -110,7 +111,7 @@ class TVDScraper():
 
             # Broadcast Flags
             try:
-                bc_info = re.compile('class="broadcast-info-icons tvd-tooltip">(.+?)</ul>', re.DOTALL).findall(content)
-                self.broadcastflags = re.compile('class="(.+?)"', re.DOTALL).findall(bc_info[0])
+                bc_info = re.compile('<div class="broadcast-feature">(.+?)</div>', re.DOTALL).findall(content)[0]
+                self.broadcastflags = ', '.join(re.compile('<span class="(.+?)"></span>', re.DOTALL).findall(bc_info))
             except IndexError:
                 pass
