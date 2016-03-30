@@ -245,10 +245,9 @@ def refreshWidget(category, offset=0):
         if not __showOutdated__:
             _now = datetime.datetime.now()
             try:
-                _dt = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['time'])
-                timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
-                if timestamp + 60 * int(blob['runtime']) < int(time.time()) :
-                    writeLog('TVHighlights: discard blob TVD.%s.%s, broadcast @%s has already finished' % (category, i, _dt), level=xbmc.LOGDEBUG)
+                _et = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['endtime'])
+                if date2timeStamp(_et, '%d.%m.%Y %H:%M') < int(time.time()) :
+                    writeLog('TVHighlights: discard blob TVD.%s.%s, broadcast @%s has already finished' % (category, i, _et), level=xbmc.LOGDEBUG)
                     continue
             except ValueError:
                 writeLog('Could not determine any date value, discard blob TVD.%s.%s' % (category, i), level=xbmc.LOGERROR)
@@ -318,6 +317,10 @@ def scrapeTVDPage(category):
             writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
 
+        _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]), \
+                                      minutes=int(data.starttime.split(':')[1])) + \
+                   datetime.timedelta(minutes=int(data.runtime)))[0:5]
+
         logoURL = pvrchannelid2logo(pvrchannelID)
         channel = pvrchannelid2channelname(pvrchannelID)
 
@@ -327,6 +330,7 @@ def scrapeTVDPage(category):
         writeLog('Thumb:           %s' % (data.thumb), level=xbmc.LOGDEBUG)
         writeLog('Start time:      %s' % (data.starttime), level=xbmc.LOGDEBUG)
         writeLog('Running Time:    %s' % (data.runtime), level=xbmc.LOGDEBUG)
+        writeLog('End time:        %s' % (_endtime), level=xbmc.LOGDEBUG)
         writeLog('Channel (TVD):   %s' % (data.channel), level=xbmc.LOGDEBUG)
         writeLog('Channel (PVR):   %s' % (channel), level=xbmc.LOGDEBUG)
         writeLog('ChannelID (PVR): %s' % (pvrchannelID), level=xbmc.LOGDEBUG)
@@ -344,6 +348,7 @@ def scrapeTVDPage(category):
                 'thumb': unicode(data.thumb),
                 'time': unicode(data.starttime),
                 'runtime': unicode(data.runtime),
+                'endtime': unicode(_endtime),
                 'channel': unicode(data.channel),
                 'pvrchannel': unicode(channel),
                 'pvrid': unicode(pvrchannelID),
@@ -366,11 +371,11 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('Set details to home/info screen', level=xbmc.LOGDEBUG)
 
     data = TVDScraper()
-    data.scrapeDetailPage(getUnicodePage(detailurl), 'id="broadcast-content-box"')
+    data.scrapeDetailPage(getUnicodePage(detailurl), 'div id="main-content" class="clearfix"')
 
     blob = searchBlob('popup', detailurl)
 
-    broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], data.endtime)
+    broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], blob['endtime'])
 
     writeLog('', level=xbmc.LOGDEBUG)
     writeLog('Title:             %s' % (blob['title']), level=xbmc.LOGDEBUG)
@@ -379,10 +384,10 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('Channel (PVR):     %s' % (blob['pvrchannel']), level=xbmc.LOGDEBUG)
     writeLog('ChannelID:         %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
     writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
-    writeLog('End Time:          %s' % (data.endtime), level=xbmc.LOGDEBUG)
+    writeLog('End Time:          %s' % (blob['endtime']), level=xbmc.LOGDEBUG)
     writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
     writeLog('Best Rating:       %s' % (data.bestRating), level=xbmc.LOGDEBUG)
-    writeLog('Description:       %s' % (data.plot), level=xbmc.LOGDEBUG)
+    writeLog('Description:       %s' % (data.plot or __LS__(30140)), level=xbmc.LOGDEBUG)
     writeLog('Keywords:          %s' % (data.keywords), level=xbmc.LOGDEBUG)
     writeLog('Rating Data:       %s' % (data.ratingdata), level=xbmc.LOGDEBUG)
     writeLog('Broadcast Flags:   %s' % (data.broadcastflags), level=xbmc.LOGDEBUG)
@@ -394,11 +399,11 @@ def showInfoWindow(detailurl, showWindow=True):
     WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "")
 
     now = datetime.datetime.now()
-    _dt = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
+    _st = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
     try:
-        _date = time.strftime(getDateFormat(), time.strptime(_dt, '%d.%m.%Y %H:%M'))
+        _date = time.strftime(getDateFormat(), time.strptime(_st, '%d.%m.%Y %H:%M'))
 
-        timestamp = date2timeStamp(_dt, '%d.%m.%Y %H:%M')
+        timestamp = date2timeStamp(_st, '%d.%m.%Y %H:%M')
 
         if timestamp >= int(time.time()):
             writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
@@ -410,19 +415,19 @@ def showInfoWindow(detailurl, showWindow=True):
         writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
         _date = ''
 
-    WINDOW.setProperty( "TVHighlightsToday.Info.Title", blob['title'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.Picture", blob['thumb'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.Subtitle", blob['outline'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.Description", data.plot)
-    WINDOW.setProperty( "TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
-    WINDOW.setProperty( "TVHighlightsToday.Info.Channel", blob['pvrchannel'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.ChannelID", blob['pvrid'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.Logo", blob['logo'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.Date", _date)
-    WINDOW.setProperty( "TVHighlightsToday.Info.StartTime", blob['time'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.RunTime", blob['runtime'])
-    WINDOW.setProperty( "TVHighlightsToday.Info.EndTime", data.endtime)
-    WINDOW.setProperty( "TVHighlightsToday.Info.Keywords", blob['genre'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Title", blob['title'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Picture", blob['thumb'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Subtitle", blob['outline'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Description", data.plot or __LS__(30140))
+    WINDOW.setProperty("TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
+    WINDOW.setProperty("TVHighlightsToday.Info.Channel", blob['pvrchannel'])
+    WINDOW.setProperty("TVHighlightsToday.Info.ChannelID", blob['pvrid'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Logo", blob['logo'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
+    WINDOW.setProperty("TVHighlightsToday.Info.StartTime", blob['time'])
+    WINDOW.setProperty("TVHighlightsToday.Info.RunTime", blob['runtime'])
+    WINDOW.setProperty("TVHighlightsToday.Info.EndTime", blob['endtime'])
+    WINDOW.setProperty("TVHighlightsToday.Info.Keywords", blob['genre'])
 
     # Ratings
     i = 1
