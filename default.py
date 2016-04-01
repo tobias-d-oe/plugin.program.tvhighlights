@@ -62,7 +62,7 @@ with open(ChannelTranslateFile, 'r') as transfile:
 TVDWatchtypes = ['spielfilm', 'serie', 'sport', 'unterhaltung', 'doku-und-info', 'kinder']
 TVDTranslations = {'spielfilm': __LS__(30120), 'serie': __LS__(30121), 'sport': __LS__(30122), 'unterhaltung': __LS__(30123), 'doku-und-info': __LS__(30124), 'kinder':__LS__(30125)}
 properties = ['ID', 'Title', 'Thumb', 'Time', 'Channel', 'PVRID', 'Logo', 'Genre', 'Comment', 'Duration', 'Extrainfos', 'WatchType']
-infoprops = ['Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'Date', 'StartTime', 'EndTime', 'Keywords', 'RatingType', 'Rating']
+infoprops = ['Title', 'Picture', 'Subtitle', 'Description', 'Broadcastdetails', 'Channel', 'ChannelID', 'Logo', 'Date', 'StartTime', 'RunTime', 'EndTime', 'Keywords']
 
 # create category list from selection in settings
 
@@ -213,8 +213,8 @@ def clearInfoProperties():
     for property in infoprops:
         WINDOW.clearProperty('TVHighlightsToday.Info.%s' % (property))
     for i in range(1, 6, 1):
-        WINDOW.clearProperty('TVHighlightsToday.RatingType.%s' % (i))
-        WINDOW.clearProperty('TVHighlightsToday.Rating.%s' % (i))
+        WINDOW.clearProperty('TVHighlightsToday.Info.RatingType.%s' % (i))
+        WINDOW.clearProperty('TVHighlightsToday.Info.Rating.%s' % (i))
 
 # clear content of widgets in Home Window
 
@@ -317,9 +317,8 @@ def scrapeTVDPage(category):
             writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
 
-        _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]), \
-                                      minutes=int(data.starttime.split(':')[1])) + \
-                   datetime.timedelta(minutes=int(data.runtime)))[0:5]
+        _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]),
+                       minutes=int(data.starttime.split(':')[1])) + datetime.timedelta(minutes=int(data.runtime)))[0:5]
 
         logoURL = pvrchannelid2logo(pvrchannelID)
         channel = pvrchannelid2channelname(pvrchannelID)
