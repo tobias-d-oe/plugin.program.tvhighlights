@@ -317,8 +317,11 @@ def scrapeTVDPage(category):
             writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
 
-        _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]),
-                       minutes=int(data.starttime.split(':')[1])) + datetime.timedelta(minutes=int(data.runtime)))[0:5]
+        if data.starttime and data.runtime:
+            _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]),
+                           minutes=int(data.starttime.split(':')[1])) + datetime.timedelta(minutes=int(data.runtime)))[0:5]
+        else:
+            _endtime = ''
 
         logoURL = pvrchannelid2logo(pvrchannelID)
         channel = pvrchannelid2channelname(pvrchannelID)
