@@ -13,7 +13,7 @@ class TVDScraper():
         self.thumb = ''
         self.detailURL = ''
         self.starttime = ''
-        self.runtime = ''
+        self.runtime = '0'
         self.genre = ''
         self.extrainfos = ''
         self.outline = ''
@@ -36,19 +36,32 @@ class TVDScraper():
 
         try:
             self.channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(content)[0]
-            self.title = re.compile('<h2><span>(.+?)</span></h2>', re.DOTALL).findall(content)[0]
             self.thumb = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
             _info = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(content)[0]
             self.detailURL = re.compile('href="(.+?)"', re.DOTALL).findall(_info)[0]
 
+            self.title = re.compile('<h2><span>(.+?)</span></h2>', re.DOTALL).findall(content)[0].strip()
+        except IndexError:
+            if not self.title:
+                try:
+                    self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(content)[0]
+                except IndexError:
+                    pass
+
+        try:
+            self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
+            self.genre = self.extrainfos.split('|')[0].strip()
+            self.runtime = re.match('\d+', self.extrainfos.split('|')[-1].strip()).group()
+        except IndexError:
+            pass
+
+        try:
             self.date = re.compile('highlight-date">(.+?) | </div>', re.DOTALL).findall(content)[0]
             self.starttime = re.compile('highlight-time">(.+?)</div>', re.DOTALL).findall(content)[0]
-            self.genre = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[0].strip()
-            self.extrainfos = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0]
+        except IndexError:
+            pass
 
-            _runtime = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[0].split('|')[-1].strip()
-            self.runtime = re.match('\d+', _runtime).group()
-
+        try:
             self.outline = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
         except IndexError:
             pass

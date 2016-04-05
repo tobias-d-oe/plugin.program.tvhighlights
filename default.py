@@ -79,6 +79,8 @@ def getUnicodePage(url, container=None):
         req = urllib2.urlopen(url.encode('utf-8'))
     except UnicodeDecodeError:
         req = urllib2.urlopen(url)
+    except ValueError:
+        return False
 
     encoding = 'utf-8'
     if "content-type" in req.headers and "charset=" in req.headers['content-type']:
@@ -373,75 +375,79 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('Set details to home/info screen', level=xbmc.LOGDEBUG)
 
     data = TVDScraper()
-    data.scrapeDetailPage(getUnicodePage(detailurl), 'div id="main-content" class="clearfix"')
+    details = getUnicodePage(detailurl)
+    if details:
+        data.scrapeDetailPage(details, 'div id="main-content" class="clearfix"')
 
-    blob = searchBlob('popup', detailurl)
+        blob = searchBlob('popup', detailurl)
 
-    broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], blob['endtime'])
+        broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], blob['endtime'])
 
-    writeLog('', level=xbmc.LOGDEBUG)
-    writeLog('Title:             %s' % (blob['title']), level=xbmc.LOGDEBUG)
-    writeLog('Thumb:             %s' % (blob['thumb']), level=xbmc.LOGDEBUG)
-    writeLog('Channel (TVD):     %s' % (blob['channel']), level=xbmc.LOGDEBUG)
-    writeLog('Channel (PVR):     %s' % (blob['pvrchannel']), level=xbmc.LOGDEBUG)
-    writeLog('ChannelID:         %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
-    writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
-    writeLog('End Time:          %s' % (blob['endtime']), level=xbmc.LOGDEBUG)
-    writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
-    writeLog('Best Rating:       %s' % (data.bestRating), level=xbmc.LOGDEBUG)
-    writeLog('Description:       %s' % (data.plot or __LS__(30140)), level=xbmc.LOGDEBUG)
-    writeLog('Keywords:          %s' % (data.keywords), level=xbmc.LOGDEBUG)
-    writeLog('Rating Data:       %s' % (data.ratingdata), level=xbmc.LOGDEBUG)
-    writeLog('Broadcast Flags:   %s' % (data.broadcastflags), level=xbmc.LOGDEBUG)
-    writeLog('', level=xbmc.LOGDEBUG)
+        writeLog('', level=xbmc.LOGDEBUG)
+        writeLog('Title:             %s' % (blob['title']), level=xbmc.LOGDEBUG)
+        writeLog('Thumb:             %s' % (blob['thumb']), level=xbmc.LOGDEBUG)
+        writeLog('Channel (TVD):     %s' % (blob['channel']), level=xbmc.LOGDEBUG)
+        writeLog('Channel (PVR):     %s' % (blob['pvrchannel']), level=xbmc.LOGDEBUG)
+        writeLog('ChannelID:         %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
+        writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
+        writeLog('End Time:          %s' % (blob['endtime']), level=xbmc.LOGDEBUG)
+        writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
+        writeLog('Best Rating:       %s' % (data.bestRating), level=xbmc.LOGDEBUG)
+        writeLog('Description:       %s' % (data.plot or __LS__(30140)), level=xbmc.LOGDEBUG)
+        writeLog('Keywords:          %s' % (data.keywords), level=xbmc.LOGDEBUG)
+        writeLog('Rating Data:       %s' % (data.ratingdata), level=xbmc.LOGDEBUG)
+        writeLog('Broadcast Flags:   %s' % (data.broadcastflags), level=xbmc.LOGDEBUG)
+        writeLog('', level=xbmc.LOGDEBUG)
 
-    clearInfoProperties()
+        clearInfoProperties()
 
-    WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "")
-    WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "")
+        WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "")
+        WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "")
 
-    now = datetime.datetime.now()
-    _st = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
-    try:
-        _date = time.strftime(getDateFormat(), time.strptime(_st, '%d.%m.%Y %H:%M'))
+        now = datetime.datetime.now()
+        _st = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
+        try:
+            _date = time.strftime(getDateFormat(), time.strptime(_st, '%d.%m.%Y %H:%M'))
 
-        timestamp = date2timeStamp(_st, '%d.%m.%Y %H:%M')
+            timestamp = date2timeStamp(_st, '%d.%m.%Y %H:%M')
 
-        if timestamp >= int(time.time()):
-            writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
-            WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
-        elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
-            writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
-            WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
-    except ImportError:
-        writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
-        _date = ''
+            if timestamp >= int(time.time()):
+                writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
+                WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
+            elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
+                writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
+                WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+        except ImportError:
+            writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
+            _date = ''
 
-    WINDOW.setProperty("TVHighlightsToday.Info.Title", blob['title'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Picture", blob['thumb'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Subtitle", blob['outline'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Description", data.plot or __LS__(30140))
-    WINDOW.setProperty("TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
-    WINDOW.setProperty("TVHighlightsToday.Info.Channel", blob['pvrchannel'])
-    WINDOW.setProperty("TVHighlightsToday.Info.ChannelID", blob['pvrid'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Logo", blob['logo'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
-    WINDOW.setProperty("TVHighlightsToday.Info.StartTime", blob['time'])
-    WINDOW.setProperty("TVHighlightsToday.Info.RunTime", blob['runtime'])
-    WINDOW.setProperty("TVHighlightsToday.Info.EndTime", blob['endtime'])
-    WINDOW.setProperty("TVHighlightsToday.Info.Keywords", blob['genre'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Title", blob['title'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Picture", blob['thumb'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Subtitle", blob['outline'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Description", data.plot or __LS__(30140))
+        WINDOW.setProperty("TVHighlightsToday.Info.Broadcastdetails", broadcastinfo)
+        WINDOW.setProperty("TVHighlightsToday.Info.Channel", blob['pvrchannel'])
+        WINDOW.setProperty("TVHighlightsToday.Info.ChannelID", blob['pvrid'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Logo", blob['logo'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
+        WINDOW.setProperty("TVHighlightsToday.Info.StartTime", blob['time'])
+        WINDOW.setProperty("TVHighlightsToday.Info.RunTime", blob['runtime'])
+        WINDOW.setProperty("TVHighlightsToday.Info.EndTime", blob['endtime'])
+        WINDOW.setProperty("TVHighlightsToday.Info.Keywords", blob['genre'])
 
-    # Ratings
-    i = 1
-    for r in data.ratingdata:
-        WINDOW.setProperty( "TVHighlightsToday.Info.RatingType.%s" %(i), r['ratingtype'] )
-        WINDOW.setProperty( "TVHighlightsToday.Info.Rating.%s" %(i), r['rating'][0] )
-        i += 1
+        # Ratings
+        i = 1
+        for r in data.ratingdata:
+            WINDOW.setProperty( "TVHighlightsToday.Info.RatingType.%s" %(i), r['ratingtype'] )
+            WINDOW.setProperty( "TVHighlightsToday.Info.Rating.%s" %(i), r['rating'][0] )
+            i += 1
 
-    if showWindow:
-        Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
-        # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
-        Popup.doModal()
+        if showWindow:
+            Popup = xbmcgui.WindowXMLDialog('script-GTO-InfoWindow.xml', __path__, 'Default', '720p')
+            # Popup = xbmcgui.WindowXMLDialog('script-TVHighlights-DialogWindow.xml', __path__, 'Default', '720p')
+            Popup.doModal()
+    else:
+        notifyOSD(__LS__(30010), __LS__(30140))
 
 # M A I N
 #________
