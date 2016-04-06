@@ -1,3 +1,7 @@
+v0.1.10
+- Fix bug in time calculation if parameters are missing
+- Add more robust scraper parts especially needed for time evaluations
+
 v0.1.9
 - Determination and presentation of rating values fixed
 
