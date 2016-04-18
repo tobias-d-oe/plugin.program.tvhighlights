@@ -19,11 +19,9 @@
     <string id="30119">Cancel</string>
 
     <string id="30110">General</string>
-    <string id="30111">Mastermode</string>
-    <string id="30112">Splitmode</string>
     <string id="30113">Prefer HD Broadcasts</string>
     <string id="30114">Info at system start and refresh</string>
-    <string id="30115">max. Entries per Category</string>
+    <string id="30115">max. Entries per Category for multiple Selection</string>
     <string id="30116">Preset Categories</string>
     <string id="30117">Runtime:</string>
 

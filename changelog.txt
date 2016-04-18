@@ -1,3 +1,7 @@
+v0.1.11
+- don't limit widgets if only one category is selected
+- bug in time calculation for end time fixed
+
 v0.1.10
 - Fix bug in time calculation if parameters are missing
 - Add more robust scraper parts especially needed for time evaluations
