@@ -76,12 +76,16 @@ class TVDScraper():
 
             try:
                 # Broadcast info (channel, start, stop)
+                '''
                 bd = re.compile('<li id="broadcast-title" itemprop="name">(.+?)<li id="broadcast-genre', re.DOTALL).findall(content)[0]
                 bd = re.compile('<li>(.+?)</li>', re.DOTALL).findall(bd)[0]
                 bd = re.sub(re.compile('<.*?>', re.DOTALL), '', bd)
 
                 _t = bd.split('|')[2]
                 self.endtime = _t.split('-')[1].strip()
+                '''
+                bd = re.compile('<div class="broadcast-time">(.+?)</div>', re.DOTALL).findall(content)[0]
+                self.endtime = bd.split('-')[1].strip()
             except IndexError:
                 pass
 

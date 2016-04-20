@@ -226,7 +226,7 @@ def clearWidgets(start_from=1):
         for property in properties:
             WINDOW.clearProperty('TVHighlightsToday.%s.%s' % (i, property))
 
-def refreshWidget(category, offset=0):
+def refreshWidget(category, offset=0, limit=True):
 
     if not __showOutdated__:
         writeLog("TVHighlights: Show only upcoming events", level=xbmc.LOGDEBUG)
@@ -236,7 +236,7 @@ def refreshWidget(category, offset=0):
 
     widget = 1
     for i in range(1, int(blobs) + 1, 1):
-        if widget > __maxHLCat__ or offset + widget > 16:
+        if (limit and  widget > __maxHLCat__) or offset + widget > 16:
             writeLog('Max. Limit of widgets reached, abort processing', level=xbmc.LOGDEBUG)
             break
 
@@ -247,9 +247,9 @@ def refreshWidget(category, offset=0):
         if not __showOutdated__:
             _now = datetime.datetime.now()
             try:
-                _et = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['endtime'])
-                if date2timeStamp(_et, '%d.%m.%Y %H:%M') < int(time.time()) :
-                    writeLog('TVHighlights: discard blob TVD.%s.%s, broadcast @%s has already finished' % (category, i, _et), level=xbmc.LOGDEBUG)
+                _st = '%s.%s.%s %s' % (_now.day, _now.month, _now.year, blob['time'])
+                if date2timeStamp(_st, '%d.%m.%Y %H:%M') + 60 * int(blob['runtime']) < int(time.time()):
+                    writeLog('TVHighlights: discard blob TVD.%s.%s, broadcast @%s has already finished' % (category, i, _st), level=xbmc.LOGDEBUG)
                     continue
             except ValueError:
                 writeLog('Could not determine any date value, discard blob TVD.%s.%s' % (category, i), level=xbmc.LOGERROR)
@@ -274,10 +274,14 @@ def refreshWidget(category, offset=0):
 def refreshHighlights():
 
     offset = 0
-    numcats = 0
+    numcats = len(categories())
+    if numcats == 1:
+        limit = False
+    else:
+        limit = True
+
     for category in categories():
-        offset += refreshWidget(category, offset)
-        numcats += 1
+        offset += refreshWidget(category, offset, limit=limit)
     clearWidgets(offset + 1)
     WINDOW.setProperty('numCategories',  str(numcats))
 
@@ -319,12 +323,6 @@ def scrapeTVDPage(category):
             writeLog("TVHighlights: Channel %s is not in PVR, discard entry" % (data.channel), level=xbmc.LOGDEBUG)
             continue
 
-        if data.starttime and data.runtime:
-            _endtime = str(datetime.timedelta(hours=int(data.starttime.split(':')[0]),
-                           minutes=int(data.starttime.split(':')[1])) + datetime.timedelta(minutes=int(data.runtime)))[0:5]
-        else:
-            _endtime = ''
-
         logoURL = pvrchannelid2logo(pvrchannelID)
         channel = pvrchannelid2channelname(pvrchannelID)
 
@@ -334,7 +332,6 @@ def scrapeTVDPage(category):
         writeLog('Thumb:           %s' % (data.thumb), level=xbmc.LOGDEBUG)
         writeLog('Start time:      %s' % (data.starttime), level=xbmc.LOGDEBUG)
         writeLog('Running Time:    %s' % (data.runtime), level=xbmc.LOGDEBUG)
-        writeLog('End time:        %s' % (_endtime), level=xbmc.LOGDEBUG)
         writeLog('Channel (TVD):   %s' % (data.channel), level=xbmc.LOGDEBUG)
         writeLog('Channel (PVR):   %s' % (channel), level=xbmc.LOGDEBUG)
         writeLog('ChannelID (PVR): %s' % (pvrchannelID), level=xbmc.LOGDEBUG)
@@ -352,7 +349,7 @@ def scrapeTVDPage(category):
                 'thumb': unicode(data.thumb),
                 'time': unicode(data.starttime),
                 'runtime': unicode(data.runtime),
-                'endtime': unicode(_endtime),
+                'endtime': unicode(data.endtime),
                 'channel': unicode(data.channel),
                 'pvrchannel': unicode(channel),
                 'pvrid': unicode(pvrchannelID),
@@ -381,7 +378,7 @@ def showInfoWindow(detailurl, showWindow=True):
 
         blob = searchBlob('popup', detailurl)
 
-        broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], blob['endtime'])
+        broadcastinfo = '%s: %s - %s' % (blob['pvrchannel'], blob['time'], data.endtime)
 
         writeLog('', level=xbmc.LOGDEBUG)
         writeLog('Title:             %s' % (blob['title']), level=xbmc.LOGDEBUG)
@@ -390,7 +387,7 @@ def showInfoWindow(detailurl, showWindow=True):
         writeLog('Channel (PVR):     %s' % (blob['pvrchannel']), level=xbmc.LOGDEBUG)
         writeLog('ChannelID:         %s' % (blob['pvrid']), level=xbmc.LOGDEBUG)
         writeLog('Start Time:        %s' % (blob['time']), level=xbmc.LOGDEBUG)
-        writeLog('End Time:          %s' % (blob['endtime']), level=xbmc.LOGDEBUG)
+        writeLog('End Time:          %s' % (data.endtime), level=xbmc.LOGDEBUG)
         writeLog('Rating Value:      %s' % (data.ratingValue), level=xbmc.LOGDEBUG)
         writeLog('Best Rating:       %s' % (data.bestRating), level=xbmc.LOGDEBUG)
         writeLog('Description:       %s' % (data.plot or __LS__(30140)), level=xbmc.LOGDEBUG)
@@ -432,7 +429,7 @@ def showInfoWindow(detailurl, showWindow=True):
         WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
         WINDOW.setProperty("TVHighlightsToday.Info.StartTime", blob['time'])
         WINDOW.setProperty("TVHighlightsToday.Info.RunTime", blob['runtime'])
-        WINDOW.setProperty("TVHighlightsToday.Info.EndTime", blob['endtime'])
+        WINDOW.setProperty("TVHighlightsToday.Info.EndTime", data.endtime)
         WINDOW.setProperty("TVHighlightsToday.Info.Keywords", blob['genre'])
 
         # Ratings
@@ -499,7 +496,7 @@ elif methode=='show_select_dialog':
     elif 0 <= ret <= 5:
         writeLog('%s selected' % (cats[ret]), level=xbmc.LOGDEBUG)
         scrapeTVDPage(TVDWatchtypes[ret])
-        empty_widgets = refreshWidget(TVDWatchtypes[ret])
+        empty_widgets = refreshWidget(TVDWatchtypes[ret], limit=False)
         clearWidgets(empty_widgets + 1)
     else:
         pass
