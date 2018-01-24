@@ -35,16 +35,19 @@ class TVDScraper():
     def scrapeHighlights(self, content):
 
         try:
-            self.channel = re.compile('/programm/" title="(.+?) Programm"', re.DOTALL).findall(content)[0]
+            self.channel = re.compile('/" title="(.+?) Programm">', re.DOTALL).findall(content)[0]
+            self.title = re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(content)[0].strip()
+            self.title = self.title.replace('<span class="playIcon">','')
+            self.title = self.title.replace('</span>','')
             self.thumb = re.compile('src="(.+?)"', re.DOTALL).findall(content)[0]
             _info = re.compile('<a class="highlight-title(.+?)<h2>', re.DOTALL).findall(content)[0]
             self.detailURL = re.compile('href="(.+?)"', re.DOTALL).findall(_info)[0]
-
-            self.title = re.compile('<h2><span>(.+?)</span></h2>', re.DOTALL).findall(content)[0].strip()
+            self.detailURL = "https://www.tvdigital.de"+self.detailURL
         except IndexError:
             if not self.title:
                 try:
-                    self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(content)[0]
+                    self.title = re.compile('<h2><span class="playIcon">(.+?)</span></h2>', re.DOTALL).findall(content)[0].strip()
+                    #self.title = re.compile('<h2 class="highlight-title">(.+?)</h2>', re.DOTALL).findall(content)[0]
                 except IndexError:
                     pass
 
