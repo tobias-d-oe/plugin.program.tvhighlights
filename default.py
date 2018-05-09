@@ -155,7 +155,8 @@ def channelName2channelId(channelname):
                 writeLog("TVHighlights found HD priorized channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
 
-            if channelname.lower() in channels['label'].lower():
+            #if channelname.lower() in channels['label'].lower():
+            if channelname.lower() == channels['label'].lower():
                 writeLog("TVHighlights found channel %s" % (channels['label']), level=xbmc.LOGDEBUG)
                 return channels['channelid']
     return False
@@ -281,7 +282,7 @@ def refreshHighlights():
         limit = True
 
     for category in categories():
-        offset += refreshWidget(category, offset, limit=limit)
+        offset += refreshWidget(category, offset, limit=limit) 
     clearWidgets(offset + 1)
     WINDOW.setProperty('numCategories',  str(numcats))
 
@@ -372,9 +373,12 @@ def showInfoWindow(detailurl, showWindow=True):
     writeLog('Set details to home/info screen', level=xbmc.LOGDEBUG)
 
     data = TVDScraper()
+    writeLog('DETURL: %s' % (detailurl), level=xbmc.LOGDEBUG)
     details = getUnicodePage(detailurl)
     if details:
-        data.scrapeDetailPage(details, 'div id="main-content" class="clearfix"')
+        writeLog('DET: %s' % (details), level=xbmc.LOGDEBUG)
+        #data.scrapeDetailPage(details, 'div id="main-content" class="clearfix"')
+        data.scrapeDetailPage(details, '<div id="remodal-content" class="detail">')
 
         blob = searchBlob('popup', detailurl)
 
@@ -403,21 +407,21 @@ def showInfoWindow(detailurl, showWindow=True):
 
         now = datetime.datetime.now()
         _st = '%s.%s.%s %s' % (now.day, now.month, now.year, blob['time'])
-        try:
-            _date = time.strftime(getDateFormat(), time.strptime(_st, '%d.%m.%Y %H:%M'))
-
-            timestamp = date2timeStamp(_st, '%d.%m.%Y %H:%M')
-
-            if timestamp >= int(time.time()):
-                writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
-                WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
-            elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
-                writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
-                WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
-        except ImportError:
-            writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
-            _date = ''
-
+#        try:
+#            _date = time.strftime(getDateFormat(), time.strptime(_st, '%d.%m.%Y %H:%M'))
+#
+#            timestamp = date2timeStamp(_st, '%d.%m.%Y %H:%M')
+#
+#            if timestamp >= int(time.time()):
+#                writeLog('Start time of title \'%s\' is @%s, enable switchtimer button' % (blob['title'], blob['time']), level=xbmc.LOGDEBUG)
+#                WINDOW.setProperty("TVHighlightsToday.Info.isInFuture", "yes")
+#            elif timestamp < int(time.time()) < timestamp + 60 * int(blob['runtime']):
+#                writeLog('Title \'%s\' is currently running, enable switch button' % (blob['title']), level=xbmc.LOGDEBUG)
+#                WINDOW.setProperty("TVHighlightsToday.Info.isRunning", "yes")
+#        except ImportError:
+#            writeLog('Could not make time conversion, strptime locked', level=xbmc.LOGERROR)
+#            _date = ''
+#
         WINDOW.setProperty("TVHighlightsToday.Info.Title", blob['title'])
         WINDOW.setProperty("TVHighlightsToday.Info.Picture", blob['thumb'])
         WINDOW.setProperty("TVHighlightsToday.Info.Subtitle", blob['outline'])
@@ -426,7 +430,7 @@ def showInfoWindow(detailurl, showWindow=True):
         WINDOW.setProperty("TVHighlightsToday.Info.Channel", blob['pvrchannel'])
         WINDOW.setProperty("TVHighlightsToday.Info.ChannelID", blob['pvrid'])
         WINDOW.setProperty("TVHighlightsToday.Info.Logo", blob['logo'])
-        WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
+#        WINDOW.setProperty("TVHighlightsToday.Info.Date", _date)
         WINDOW.setProperty("TVHighlightsToday.Info.StartTime", blob['time'])
         WINDOW.setProperty("TVHighlightsToday.Info.RunTime", blob['runtime'])
         WINDOW.setProperty("TVHighlightsToday.Info.EndTime", data.endtime)

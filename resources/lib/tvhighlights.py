@@ -35,7 +35,8 @@ class TVDScraper():
     def scrapeHighlights(self, content):
 
         try:
-            self.channel = re.compile('/" title="(.+?) Programm">', re.DOTALL).findall(content)[0]
+            #self.channel = re.compile('/" title="(.+?) Programm">', re.DOTALL).findall(content)[0]
+            self.channel = re.compile('class="highlight-channel">(.+?)</div>', re.DOTALL).findall(content)[0]
             self.title = re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(content)[0].strip()
             self.title = self.title.replace('<span class="playIcon">','')
             self.title = self.title.replace('</span>','')
@@ -66,6 +67,8 @@ class TVDScraper():
 
         try:
             self.outline = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(content)[1]
+            if self.outline.startswith('</strong'):
+		self.outline=""
         except IndexError:
             pass
 
@@ -106,10 +109,11 @@ class TVDScraper():
 
             # Movie description
             try:
-                self.plot = re.compile('<div class="description">(.+?)</div>', re.DOTALL).findall(content)[0]
+        #        self.plot = re.compile('<div class="description">(.+?)</div>', re.DOTALL).findall(content)[0]
                 self.plot = re.compile('<p>(.+?)</p>', re.DOTALL).findall(content)[0]
             except IndexError:
                 pass
+            #self.plot = content
 
             # Keywords
             try:
